@@ -3,9 +3,9 @@ import * as SplashScreen from "expo-splash-screen";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import Root from "navigation/Root";
 import { ThemeProvider } from "styled-components";
-import { darkTheme, lightTheme } from "styled";
+import Root from "./navigation/Root";
+import { darkTheme, lightTheme } from "./styled";
 
 SplashScreen.preventAutoHideAsync();
 

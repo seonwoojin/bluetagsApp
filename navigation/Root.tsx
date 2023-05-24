@@ -26,7 +26,7 @@ const Nav = createNativeStackNavigator<RootNavParamList>();
 const Root = () => (
   <Nav.Navigator screenOptions={{ presentation: "modal", headerShown: false }}>
     <Nav.Screen name="Tabs" component={Tabs} />
-    <Nav.Screen name="Stack" component={Stack} />
+    {/* <Nav.Screen name="Stack" component={Stack} /> */}
   </Nav.Navigator>
 );
 export default Root;

@@ -2,8 +2,8 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text, View, TouchableOpacity, useColorScheme } from "react-native";
 import { StackNavParamList } from "./Root";
-import BluecardDetail from "@screens/bluecard/BluecardDetail";
-import { BLACK_COLOR } from "color";
+import { BLACK_COLOR } from "../color";
+import BluecardDetail from "../screens/bluecard/BluecardDetail";
 
 const NativeStack = createNativeStackNavigator<StackNavParamList>();
 

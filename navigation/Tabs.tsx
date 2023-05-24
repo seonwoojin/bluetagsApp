@@ -4,12 +4,8 @@ import { useColorScheme } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Stack from "./Stack";
 import { TabNavParamList } from "./Root";
-import { BLACK_COLOR, DARK_GREY, LIGHT_GREY, YELLOW_COLOR } from "color";
-import Home from "@screens/Home";
-import News from "@screens/news/News";
-import WatchList from "@screens/watchlist/WatchList";
-import Calendar from "@screens/calendar/Calendar";
-import Project from "@screens/project/Project";
+import { BLACK_COLOR, DARK_GREY, YELLOW_COLOR } from "../color";
+import Home from "../screens/Home";
 
 const Tab = createBottomTabNavigator<TabNavParamList>();
 
@@ -49,7 +45,7 @@ const Tabs = () => {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="News"
         component={News}
         options={{
@@ -84,7 +80,7 @@ const Tabs = () => {
             <Ionicons name={"search-outline"} color={color} size={size} />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };
