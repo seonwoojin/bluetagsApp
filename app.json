@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "bluetagsApp",
+    "slug": "bluetagsApp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "bluetagsApp"
+}
