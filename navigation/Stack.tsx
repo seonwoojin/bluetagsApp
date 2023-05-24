@@ -4,6 +4,7 @@ import { Text, View, TouchableOpacity, useColorScheme } from "react-native";
 import { StackNavParamList } from "./Root";
 import { BLACK_COLOR } from "../color";
 import BluecardDetail from "../screens/bluecard/BluecardDetail";
+import SignIn from "../screens/signin/SignIn";
 
 const NativeStack = createNativeStackNavigator<StackNavParamList>();
 
@@ -22,6 +23,7 @@ const Stack = () => {
       }}
     >
       <NativeStack.Screen name="BluecardDetail" component={BluecardDetail} />
+      <NativeStack.Screen name="SignIn" component={SignIn} />
     </NativeStack.Navigator>
   );
 };
