@@ -2,7 +2,6 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text, View, useColorScheme } from "react-native";
 import { TabNavParamList } from "./Root";
-import { BLACK_COLOR, DARK_GREY, LIGHT_GREY, YELLOW_COLOR } from "../color";
 import Home from "../screens/Home";
 import News from "../screens/news/News";
 import WatchList from "../screens/watchlist/WatchList";
@@ -10,6 +9,7 @@ import Calendar from "../screens/calendar/Calendar";
 import Project from "../screens/project/Project";
 import Svg, { Path } from "react-native-svg";
 import Header from "../components/Header";
+import Constants from "expo-constants";
 
 const Tab = createBottomTabNavigator<TabNavParamList>();
 
@@ -19,9 +19,9 @@ const Tabs = () => {
     <Tab.Navigator
       sceneContainerStyle={{
         backgroundColor: "#ffffff",
+        paddingTop: Constants.statusBarHeight,
       }}
       screenOptions={{
-        unmountOnBlur: true,
         tabBarStyle: {
           backgroundColor: "#f9f8ff",
           height: 50,

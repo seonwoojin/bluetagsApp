@@ -5,6 +5,7 @@ import { StackNavParamList } from "./Root";
 import { BLACK_COLOR } from "../color";
 import BluecardDetail from "../screens/bluecard/BluecardDetail";
 import SignIn from "../screens/signin/SignIn";
+import Header from "../components/Header";
 
 const NativeStack = createNativeStackNavigator<StackNavParamList>();
 
@@ -13,13 +14,8 @@ const Stack = () => {
   return (
     <NativeStack.Navigator
       screenOptions={{
-        headerBackTitleVisible: false,
-        headerStyle: {
-          backgroundColor: isDark ? BLACK_COLOR : "white",
-        },
-        headerTitleStyle: {
-          color: isDark ? "white" : BLACK_COLOR,
-        },
+        presentation: "modal",
+        headerShown: false,
       }}
     >
       <NativeStack.Screen name="BluecardDetail" component={BluecardDetail} />

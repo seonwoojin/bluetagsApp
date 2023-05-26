@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
 import Stack from "./Stack";
 import { NavigatorScreenParams } from "@react-navigation/native";
+import { BluecardWithProject } from "../libs/schema";
 
 export type TabNavParamList = {
   Home: undefined;
@@ -13,13 +14,13 @@ export type TabNavParamList = {
 };
 
 export type StackNavParamList = {
-  BluecardDetail: undefined;
+  BluecardDetail: BluecardWithProject;
   SignIn: undefined;
 };
 
 export type RootNavParamList = {
   Tabs: NavigatorScreenParams<TabNavParamList>;
-  Stack: StackNavParamList;
+  Stack: NavigatorScreenParams<StackNavParamList>;
 };
 
 const Nav = createNativeStackNavigator<RootNavParamList>();

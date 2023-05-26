@@ -6,6 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { ThemeProvider } from "styled-components";
 import Root from "./navigation/Root";
 import { darkTheme, lightTheme } from "./styled";
+import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,6 +49,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <NavigationContainer onReady={onLayoutRootView}>
+          <StatusBar />
           <Root />
         </NavigationContainer>
       </ThemeProvider>

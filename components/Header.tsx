@@ -3,6 +3,8 @@ import { ParamListBase } from "@react-navigation/native";
 import { TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import { Path, Rect, Svg, WithLocalSvg } from "react-native-svg";
+import Logo from "./Logo";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const Wrapper = styled.View`
   flex-direction: row;
@@ -31,7 +33,9 @@ const User = styled.View`
 `;
 
 interface Props {
-  navigation: BottomTabNavigationProp<ParamListBase>;
+  navigation:
+    | BottomTabNavigationProp<ParamListBase>
+    | NativeStackNavigationProp<ParamListBase>;
 }
 
 const Header = ({ navigation }: Props) => {
@@ -44,11 +48,7 @@ const Header = ({ navigation }: Props) => {
           });
         }}
       >
-        <WithLocalSvg
-          width={104}
-          fill={"#000000"}
-          asset={require("../assets/logo.svg")}
-        />
+        <Logo />
       </TouchableWithoutFeedback>
       <UserContainer>
         <SearchButton>

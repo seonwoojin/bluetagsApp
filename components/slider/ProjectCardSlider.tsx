@@ -1,9 +1,9 @@
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import styled from "styled-components/native";
-import Banner from "../Banner";
 import Dimension from "../../libs/useDimension";
 import { useRef, useState } from "react";
-import { FlatListProps } from "react-native";
+import { Project } from "../../libs/schema";
+import ProjectCardList from "../project/ProjectCardList";
 
 const SwiperContainer = styled.View`
   flex: 1;
@@ -11,45 +11,36 @@ const SwiperContainer = styled.View`
   justify-content: center;
   align-items: center;
   align-self: center;
-  margin-top: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 100px;
 `;
 
-const data = [
-  require(`./../../assets/banner/Banner1.png`),
-  require(`./../../assets/banner/Banner2.png`),
-  require(`./../../assets/banner/Banner3.png`),
-  require(`./../../assets/banner/Banner4.png`),
-];
+interface Props {
+  data: Project[][];
+}
 
-const BannerSlider = () => {
+const ProjectCardSlider = ({ data }: Props) => {
   const [activeSlide, setActiveSlide] = useState(0);
   const carousel = useRef<any>(null);
   return (
     <SwiperContainer>
       <Carousel
         ref={carousel}
-        useScrollView={true}
         data={data}
         renderItem={({ item, index }) => {
-          return (
-            <Banner
-              isHome={true}
-              text={"Inspiring NFT experience"}
-              url={item}
-            />
-          );
+          return <ProjectCardList data={item} />;
         }}
-        itemWidth={Math.round(Dimension.width * 0.9)}
+        itemWidth={Math.round(Dimension.width)}
         sliderWidth={Math.round(Dimension.width)}
         horizontal
         loop
         loopClonesPerSide={data.length}
         firstItem={data.length}
         autoplay
-        inactiveSlideOpacity={0}
+        inactiveSlideOpacity={1}
+        inactiveSlideScale={1}
         onSnapToItem={(index) => setActiveSlide(index)}
         enableMomentum={true}
+        shouldOptimizeUpdates={false}
       />
       <Pagination
         dotsLength={data.length}
@@ -75,4 +66,4 @@ const BannerSlider = () => {
   );
 };
 
-export default BannerSlider;
+export default ProjectCardSlider;
