@@ -13,6 +13,7 @@ const Wrapper = styled.View`
   height: 50px;
   padding-left: 8%;
   padding-right: 8%;
+  background-color: white;
 `;
 
 const UserContainer = styled.View`

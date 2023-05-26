@@ -4,8 +4,12 @@ import { Shadow } from "react-native-shadow-2";
 import { Text, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Path, Svg } from "react-native-svg";
 import BlueTag from "../Bluetag";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { RootNavParamList } from "../../navigation/Root";
+import {
+  NavigationProp,
+  NavigatorScreenParams,
+  useNavigation,
+} from "@react-navigation/native";
+import { HomeStackNavParamList } from "../../navigation/Root";
 
 const BlueCardContainer = styled.View`
   position: relative;
@@ -114,14 +118,9 @@ interface Props {
 const week = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
 const BlueCardMedium = ({ data }: Props) => {
-  const navigation = useNavigation<NavigationProp<RootNavParamList>>();
+  const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
   const onPress = () => {
-    navigation.navigate("Stack", {
-      screen: "BluecardDetail",
-      params: {
-        ...data,
-      },
-    });
+    navigation.navigate("BluecardDetail", { ...data });
   };
   return (
     <Shadow

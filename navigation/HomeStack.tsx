@@ -1,27 +1,31 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text, View, TouchableOpacity, useColorScheme } from "react-native";
-import { StackNavParamList } from "./Root";
 import { BLACK_COLOR } from "../color";
 import BluecardDetail from "../screens/bluecard/BluecardDetail";
 import SignIn from "../screens/signin/SignIn";
 import Header from "../components/Header";
+import Home from "../screens/Home";
+import { HomeStackNavParamList } from "./Root";
 
-const NativeStack = createNativeStackNavigator<StackNavParamList>();
+const NativeStack = createNativeStackNavigator<HomeStackNavParamList>();
 
-const Stack = () => {
+const HomeStack = () => {
   const isDark = useColorScheme() === "dark";
   return (
     <NativeStack.Navigator
       screenOptions={{
-        presentation: "modal",
+        presentation: "containedModal",
         headerShown: false,
+        contentStyle: {
+          backgroundColor: "white",
+        },
       }}
     >
+      <NativeStack.Screen name="Main" component={Home} />
       <NativeStack.Screen name="BluecardDetail" component={BluecardDetail} />
-      <NativeStack.Screen name="SignIn" component={SignIn} />
     </NativeStack.Navigator>
   );
 };
 
-export default Stack;
+export default HomeStack;

@@ -1,20 +1,24 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
-import Stack from "./Stack";
+import Stack from "./HomeStack";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { BluecardWithProject } from "../libs/schema";
 
 export type TabNavParamList = {
-  Home: undefined;
+  Home: HomeStackNavParamList;
   News: undefined;
   WatchList: undefined;
   Calendar: undefined;
   Project: undefined;
 };
 
-export type StackNavParamList = {
+export type HomeStackNavParamList = {
+  Main: undefined;
   BluecardDetail: BluecardWithProject;
+};
+
+export type StackNavParamList = {
   SignIn: undefined;
 };
 

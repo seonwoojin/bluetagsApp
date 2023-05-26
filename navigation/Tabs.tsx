@@ -10,6 +10,7 @@ import Project from "../screens/project/Project";
 import Svg, { Path } from "react-native-svg";
 import Header from "../components/Header";
 import Constants from "expo-constants";
+import HomeStack from "./HomeStack";
 
 const Tab = createBottomTabNavigator<TabNavParamList>();
 
@@ -43,7 +44,7 @@ const Tabs = () => {
     >
       <Tab.Screen
         name="Home"
-        component={Home}
+        component={HomeStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Svg width={size} height={size} viewBox="0 0 24 24" fill={color}>

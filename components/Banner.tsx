@@ -7,7 +7,7 @@ const BannerWrapper = styled.View`
   flex: 1;
   align-items: flex-start;
   justify-content: center;
-  width: 100%;
+  width: ${Dimension.width * 0.9};
   height: 80px;
 `;
 
@@ -16,7 +16,7 @@ const BannerImage = styled.Image`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
+  height: 80px;
 `;
 
 const BannerText = styled.Text`
@@ -35,7 +35,7 @@ interface Props {
 export default function Banner({ text, isHome = false, url }: Props) {
   return (
     <BannerWrapper>
-      <BannerImage source={url} />
+      <BannerImage source={typeof url === "string" ? { uri: url } : url} />
       <BannerText>{text}</BannerText>
       <BannerText>{isHome ? "Bluetags_" : null}</BannerText>
     </BannerWrapper>

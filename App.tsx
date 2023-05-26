@@ -7,6 +7,7 @@ import { ThemeProvider } from "styled-components";
 import Root from "./navigation/Root";
 import { darkTheme, lightTheme } from "./styled";
 import { StatusBar } from "expo-status-bar";
+import Tabs from "./navigation/Tabs";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,7 +50,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <NavigationContainer onReady={onLayoutRootView}>
-          <StatusBar />
+          <StatusBar backgroundColor="white" />
           <Root />
         </NavigationContainer>
       </ThemeProvider>
