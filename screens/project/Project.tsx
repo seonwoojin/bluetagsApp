@@ -8,6 +8,7 @@ import { FlatList, View } from "react-native";
 import Banner from "../../components/Banner";
 import { useState } from "react";
 import Title from "../../components/Title";
+import { useUser } from "../../libs/context";
 
 const Wrapper = styled.View`
   align-items: center;
@@ -37,6 +38,8 @@ interface ProjectsResponse {
 }
 
 const ProjectScreeen = () => {
+  const { user } = useUser();
+  console.log(user);
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery<ProjectsResponse>(
     ["projectquery", "projects"],
@@ -67,11 +70,14 @@ const ProjectScreeen = () => {
       renderItem={({ item, index }) =>
         index === 0 ? (
           <ProjectList>
-            <ProjectItem />
+            <ProjectItem subscribeList={[]} />
           </ProjectList>
         ) : (
           <ProjectList>
-            <ProjectItem project={item as Project} />
+            <ProjectItem
+              subscribeList={user ? user.subscribe : []}
+              project={item as Project}
+            />
           </ProjectList>
         )
       }

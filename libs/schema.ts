@@ -62,6 +62,23 @@ export type User = {
   unlike_newscard: string[];
 };
 
+export type SocialUser = {
+  id: string;
+  email: string;
+  name: string;
+  profile: string;
+  createdAt: Date | null;
+  readBlueCard: string[];
+  subscribe: string[];
+  isSocial: boolean;
+  calendar: string[];
+  survey: Survey;
+  like_bluecard: string[];
+  unlike_bluecard: string[];
+  like_newscard: string[];
+  unlike_newscard: string[];
+};
+
 export interface ProjectWithBlueCard extends Project {
   _count: {
     BlueCards: number;

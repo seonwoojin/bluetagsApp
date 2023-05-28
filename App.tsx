@@ -9,7 +9,7 @@ import { darkTheme, lightTheme } from "./styled";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserContext } from "./libs/context";
-import { User } from "./libs/schema";
+import { SocialUser, User } from "./libs/schema";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -18,7 +18,7 @@ const queryClient = new QueryClient();
 export default function App() {
   //rAsyncStorage.clear();
   const [appIsReady, setAppIsReady] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | SocialUser | null>(null);
   const isDark = useColorScheme() === "dark";
 
   useEffect(() => {

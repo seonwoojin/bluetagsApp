@@ -7,6 +7,8 @@ import { useState } from "react";
 import Banner from "../../components/Banner";
 import BlueCardMedium from "../../components/bluecard/BlueCardMedium";
 import Upper from "../../components/button/Upper";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { WatchListStackNavParamList } from "../../navigation/Root";
 
 const Wrapper = styled.View`
   align-items: center;
@@ -42,6 +44,8 @@ interface Response {
 }
 
 const WatchList = () => {
+  const navigation =
+    useNavigation<NavigationProp<WatchListStackNavParamList>>();
   const queryClient = useQueryClient();
   const { data, isLoading, hasNextPage, fetchNextPage } =
     useInfiniteQuery<Response>(
@@ -83,7 +87,12 @@ const WatchList = () => {
       data={data.pages.map((page) => page.data.bluecards).flat()}
       renderItem={({ item }) => (
         <BluecardContainer>
-          <BlueCardMedium data={item} />
+          <BlueCardMedium
+            fn={() => {
+              navigation.navigate("BluecardDetail", { ...item });
+            }}
+            data={item}
+          />
         </BluecardContainer>
       )}
       ItemSeparatorComponent={HSeparator}

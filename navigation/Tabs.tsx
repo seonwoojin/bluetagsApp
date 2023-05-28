@@ -11,6 +11,8 @@ import Svg, { Path } from "react-native-svg";
 import Header from "../components/Header";
 import Constants from "expo-constants";
 import HomeStack from "./HomeStack";
+import WatcListStack from "./WatchlistStack";
+import ProjectStack from "./ProjectStack";
 
 const Tab = createBottomTabNavigator<TabNavParamList>();
 
@@ -72,7 +74,7 @@ const Tabs = () => {
       />
       <Tab.Screen
         name="WatchList"
-        component={WatchList}
+        component={WatcListStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
@@ -97,7 +99,7 @@ const Tabs = () => {
       />
       <Tab.Screen
         name="Project"
-        component={Project}
+        component={ProjectStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Svg width={size} height={size} viewBox="0 0 24 24" fill={color}>

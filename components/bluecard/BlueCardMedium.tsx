@@ -113,22 +113,19 @@ const PostBlueTags = styled.View`
 
 interface Props {
   data: BluecardWithProject;
+  fn: () => void;
 }
 
 const week = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
-const BlueCardMedium = ({ data }: Props) => {
-  const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
-  const onPress = () => {
-    navigation.navigate("BluecardDetail", { ...data });
-  };
+const BlueCardMedium = ({ data, fn }: Props) => {
   return (
     <Shadow
       startColor="rgba(0, 0, 0, 0.03)"
       offset={[0, 4]}
       style={{ borderRadius: 8, marginBottom: 15 }}
     >
-      <TouchableWithoutFeedback onPress={onPress}>
+      <TouchableWithoutFeedback onPress={fn}>
         <BlueCardContainer>
           <BlueCardBackGround>
             <BackGroundImage

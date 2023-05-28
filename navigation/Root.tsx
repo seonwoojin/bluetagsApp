@@ -9,14 +9,24 @@ import SignUp from "../screens/signup/SignUp";
 export type TabNavParamList = {
   Home: NavigatorScreenParams<HomeStackNavParamList>;
   News: undefined;
-  WatchList: undefined;
+  WatchList: NavigatorScreenParams<WatchListStackNavParamList>;
   Calendar: undefined;
-  Project: undefined;
+  Project: NavigatorScreenParams<ProjectStackNavParamList>;
 };
 
 export type HomeStackNavParamList = {
   Main: undefined;
   BluecardDetail: BluecardWithProject;
+  ProjectDetail: Project;
+};
+
+export type WatchListStackNavParamList = {
+  Main: undefined;
+  BluecardDetail: BluecardWithProject;
+};
+
+export type ProjectStackNavParamList = {
+  Main: undefined;
   ProjectDetail: Project;
 };
 

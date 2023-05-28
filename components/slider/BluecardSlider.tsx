@@ -4,6 +4,8 @@ import Dimension from "../../libs/useDimension";
 import { useRef, useState } from "react";
 import { BluecardWithProject } from "../../libs/schema";
 import BlueCardMedium from "../bluecard/BlueCardMedium";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { HomeStackNavParamList } from "../../navigation/Root";
 
 const SwiperContainer = styled.View`
   flex: 1;
@@ -31,6 +33,7 @@ interface Props {
 }
 
 const BluecardSlider = ({ data }: Props) => {
+  const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
   const [activeSlide, setActiveSlide] = useState(0);
   const carousel = useRef<any>(null);
   return (
@@ -39,7 +42,14 @@ const BluecardSlider = ({ data }: Props) => {
         ref={carousel}
         data={data}
         renderItem={({ item, index }) => {
-          return <BlueCardMedium data={item} />;
+          return (
+            <BlueCardMedium
+              fn={() => {
+                navigation.navigate("BluecardDetail", { ...item });
+              }}
+              data={item}
+            />
+          );
         }}
         itemWidth={345}
         sliderWidth={Math.round(Dimension.width)}
