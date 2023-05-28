@@ -7,3 +7,15 @@ const axiosInstance = axios.create({
 export const homeBluecards = () => axiosInstance.get("/api/bluecards");
 
 export const allProjects = () => axiosInstance.get("/api/projects");
+
+export const getProject = (key: string) =>
+  axiosInstance.get(`/api/projects/${key}`);
+
+export const projectBluecards = (key: string, lastId: string) =>
+  axiosInstance.get(`/api/bluecards/project/${key}?previous=${lastId}`);
+
+export const allNewscards = (lastId: string) =>
+  axiosInstance.get(`/api/newscards?previous=${lastId}`);
+
+export const watchListBluecards = (lastId: string) =>
+  axiosInstance.get(`/api/bluecards?watchlist=true&previous=${lastId}`);

@@ -1,14 +1,15 @@
 import styled from "styled-components/native";
 import Title from "../components/Title";
 import BannerSlider from "../components/slider/BannerSlider";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { allProjects, homeBluecards } from "../libs/api";
 import { BluecardWithProject, Project } from "../libs/schema";
 import BluecardSlider from "../components/slider/BluecardSlider";
-import { useEffect, useMemo, useState } from "react";
-import ProjectCardList from "../components/project/ProjectCardList";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ProjectCardSlider from "../components/slider/ProjectCardSlider";
-import BlueCardMedium from "../components/bluecard/BlueCardMedium";
+import { useUser } from "../libs/context";
+import { useFocusEffect } from "@react-navigation/native";
+import { RefreshControl } from "react-native";
 
 const Wrapper = styled.ScrollView``;
 
@@ -25,10 +26,13 @@ interface ProjectsResponse {
 }
 
 const Home = () => {
-  const { data, isLoading } = useQuery<Response>("home", homeBluecards);
+  const queryClient = useQueryClient();
+  const { data, isLoading } = useQuery<Response>(
+    ["homequery", "home"],
+    homeBluecards
+  );
   const { data: projectData, isLoading: projectLoading } =
-    useQuery<ProjectsResponse>("projects", allProjects);
-
+    useQuery<ProjectsResponse>(["homequery", "projects"], allProjects);
   const sortProjects = (projects: Project[]) => {
     const groupedData = [];
     const chunkSize = 4;
@@ -45,9 +49,20 @@ const Home = () => {
       return [];
     }
   }, [projectData]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await queryClient.refetchQueries(["homequery"]);
+    setRefreshing(false);
+  };
 
   return (
-    <Wrapper>
+    <Wrapper
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <BannerSlider />
       <Title subTitle="New" title="BlueCard" />
       {!isLoading && data ? (

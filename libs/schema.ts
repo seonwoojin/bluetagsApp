@@ -1,3 +1,9 @@
+enum Survey {
+  "FALSE",
+  "TRUE",
+  "HOLD",
+}
+
 export type Project = {
   id: string;
   key: string;
@@ -35,3 +41,41 @@ export type BlueCard = {
 export interface BluecardWithProject extends BlueCard {
   project: Project;
 }
+
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+  password: string;
+  profile: string;
+  auth: boolean;
+  admin: boolean | null;
+  createdAt: Date | null;
+  readBlueCard: string[];
+  subscribe: string[];
+  isSocial: boolean;
+  calendar: string[];
+  survey: Survey;
+  like_bluecard: string[];
+  unlike_bluecard: string[];
+  like_newscard: string[];
+  unlike_newscard: string[];
+};
+
+export interface ProjectWithBlueCard extends Project {
+  _count: {
+    BlueCards: number;
+  };
+}
+
+export type NewsCard = {
+  id: string;
+  title: string;
+  description: string;
+  tags: string[];
+  subject: string;
+  createdAt: Date;
+  imgURL: string[];
+  like: number;
+  unlike: number;
+};

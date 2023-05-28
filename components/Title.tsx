@@ -5,6 +5,7 @@ const Wrapper = styled.View`
   justify-content: center;
   align-items: center;
   width: 100%;
+  height: 30px;
   margin-bottom: 30px;
   padding-left: 8%;
 `;

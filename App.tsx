@@ -7,19 +7,35 @@ import { ThemeProvider } from "styled-components";
 import Root from "./navigation/Root";
 import { darkTheme, lightTheme } from "./styled";
 import { StatusBar } from "expo-status-bar";
-import Tabs from "./navigation/Tabs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserContext } from "./libs/context";
+import { User } from "./libs/schema";
 
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
 export default function App() {
+  //rAsyncStorage.clear();
   const [appIsReady, setAppIsReady] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const isDark = useColorScheme() === "dark";
 
   useEffect(() => {
+    const getUser = async () => {
+      try {
+        const value = await AsyncStorage.getItem("user");
+        setUser(value != null ? JSON.parse(value) : null);
+        if (value !== null) {
+          // value previously stored
+        }
+      } catch (e) {
+        // error reading value
+      }
+    };
     async function prepare() {
       try {
+        await getUser();
         await new Promise((resolve: any) => setTimeout(resolve, 2000));
       } catch (e) {
         console.warn(e);
@@ -47,13 +63,15 @@ export default function App() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-        <NavigationContainer onReady={onLayoutRootView}>
-          <StatusBar backgroundColor="white" />
-          <Root />
-        </NavigationContainer>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <UserContext.Provider value={{ user, setUser }}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+          <NavigationContainer onReady={onLayoutRootView}>
+            <StatusBar backgroundColor="white" />
+            <Root />
+          </NavigationContainer>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </UserContext.Provider>
   );
 }

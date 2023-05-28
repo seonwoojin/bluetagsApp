@@ -4,10 +4,9 @@ import styled from "styled-components/native";
 import Dimension from "../libs/useDimension";
 
 const BannerWrapper = styled.View`
-  flex: 1;
   align-items: flex-start;
   justify-content: center;
-  width: ${Dimension.width * 0.9};
+  width: ${Math.round(Dimension.width * 0.9)}px;
   height: 80px;
 `;
 
@@ -29,15 +28,37 @@ const BannerText = styled.Text`
 interface Props {
   text: string;
   isHome?: boolean;
-  url: any;
+  url?: any;
+  children?: React.ReactNode;
 }
 
-export default function Banner({ text, isHome = false, url }: Props) {
+const data = [
+  require(`../assets/banner/Banner1.png`),
+  require(`../assets/banner/Banner2.png`),
+  require(`../assets/banner/Banner3.png`),
+  require(`../assets/banner/Banner4.png`),
+];
+
+export default function Banner({ text, isHome = false, url, children }: Props) {
+  const [banner, setBanner] = useState(1);
+  useEffect(() => {
+    const number = Math.ceil(Math.random() * 4);
+    setBanner(number);
+  }, []);
   return (
     <BannerWrapper>
-      <BannerImage source={typeof url === "string" ? { uri: url } : url} />
+      <BannerImage
+        source={
+          url
+            ? typeof url === "string"
+              ? { uri: url }
+              : url
+            : require(`../assets/banner/Banner1.png`)
+        }
+      />
       <BannerText>{text}</BannerText>
-      <BannerText>{isHome ? "Bluetags_" : null}</BannerText>
+      {isHome ? <BannerText>Bluetags_</BannerText> : null}
+      {children}
     </BannerWrapper>
   );
 }

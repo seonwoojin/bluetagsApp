@@ -26,7 +26,7 @@ const BlueCardWrapper = styled.View`
   margin-top: 10px;
   margin-bottom: 30px;
   padding: 25px 30px;
-  gap: 60px;
+  gap: 30px;
   max-width: 1430px;
   width: ${Math.round(Dimension.width)}px;
   height: auto;
@@ -115,10 +115,6 @@ const BlueCardCreatedAt = styled.Text`
 const BlueCardDescription = styled.View`
   width: 100%;
   height: auto;
-  .ql-align-center {
-    display: flex;
-    justify-content: center;
-  }
 `;
 
 const BlueCardDescriptionText = styled.Text`

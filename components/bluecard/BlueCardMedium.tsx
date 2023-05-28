@@ -66,7 +66,7 @@ const LogoImage = styled.Image`
 `;
 
 const PostTitle = styled.View`
-  height: 35px;
+  height: 38px;
   width: 230px;
 `;
 
@@ -124,7 +124,7 @@ const BlueCardMedium = ({ data }: Props) => {
   };
   return (
     <Shadow
-      startColor="rgba(0, 0, 0, 0.1)"
+      startColor="rgba(0, 0, 0, 0.03)"
       offset={[0, 4]}
       style={{ borderRadius: 8, marginBottom: 15 }}
     >

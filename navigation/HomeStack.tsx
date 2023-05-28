@@ -1,12 +1,10 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Text, View, TouchableOpacity, useColorScheme } from "react-native";
-import { BLACK_COLOR } from "../color";
+import { useColorScheme } from "react-native";
 import BluecardDetail from "../screens/bluecard/BluecardDetail";
-import SignIn from "../screens/signin/SignIn";
-import Header from "../components/Header";
 import Home from "../screens/Home";
 import { HomeStackNavParamList } from "./Root";
+import ProjectDetail from "../screens/project/ProjectDetail";
 
 const NativeStack = createNativeStackNavigator<HomeStackNavParamList>();
 
@@ -24,6 +22,7 @@ const HomeStack = () => {
     >
       <NativeStack.Screen name="Main" component={Home} />
       <NativeStack.Screen name="BluecardDetail" component={BluecardDetail} />
+      <NativeStack.Screen name="ProjectDetail" component={ProjectDetail} />
     </NativeStack.Navigator>
   );
 };
