@@ -1,14 +1,13 @@
-import { useInfiniteQuery, useQueryClient } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { BluecardWithProject } from "../../libs/schema";
 import { watchListBluecards } from "../../libs/api";
 import { FlatList } from "react-native";
 import styled from "styled-components/native";
-import { useState } from "react";
+import React, { useState } from "react";
 import Banner from "../../components/Banner";
 import BlueCardMedium from "../../components/bluecard/BlueCardMedium";
-import Upper from "../../components/button/Upper";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { WatchListStackNavParamList } from "../../navigation/Root";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 const Wrapper = styled.View`
   align-items: center;
@@ -43,13 +42,12 @@ interface Response {
   };
 }
 
-const WatchList = () => {
-  const navigation =
-    useNavigation<NavigationProp<WatchListStackNavParamList>>();
-  const queryClient = useQueryClient();
-  const { data, isLoading, hasNextPage, fetchNextPage } =
+const WatchList: React.FC<
+  NativeStackScreenProps<WatchListStackNavParamList, "Main">
+> = ({ navigation }) => {
+  const { data, isLoading, hasNextPage, fetchNextPage, refetch } =
     useInfiniteQuery<Response>(
-      ["watchlist", "bluecards"],
+      "watchlist",
       ({ pageParam = "undefined" }) => watchListBluecards(pageParam),
       {
         getNextPageParam: (lastPage, allPages) => {
@@ -64,7 +62,8 @@ const WatchList = () => {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await queryClient.refetchQueries(["watchlist"]);
+    await refetch();
+    setRefreshing(false);
   };
 
   return data ? (
@@ -77,9 +76,6 @@ const WatchList = () => {
       ListHeaderComponent={
         <Wrapper>
           <Banner text="Watchlist" />
-          <SelectWrapper>
-            <Upper />
-          </SelectWrapper>
         </Wrapper>
       }
       contentContainerStyle={{ paddingBottom: 30 }}
@@ -90,6 +86,9 @@ const WatchList = () => {
           <BlueCardMedium
             fn={() => {
               navigation.navigate("BluecardDetail", { ...item });
+            }}
+            projectFn={() => {
+              navigation.navigate("ProjectDetail", { ...item.project });
             }}
             data={item}
           />

@@ -93,7 +93,7 @@ const HSeparator = styled.View`
   height: 15px;
 `;
 
-type ProjectdDetailScreenProps = NativeStackScreenProps<
+type ProjectDetailScreenProps = NativeStackScreenProps<
   HomeStackNavParamList,
   "ProjectDetail"
 >;
@@ -110,8 +110,9 @@ interface ResponseBluecards {
   };
 }
 
-const ProjectDetail: React.FC<ProjectdDetailScreenProps> = ({
+const ProjectDetail: React.FC<ProjectDetailScreenProps> = ({
   route: { params },
+  navigation,
 }) => {
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery<Response>(
@@ -211,9 +212,14 @@ const ProjectDetail: React.FC<ProjectdDetailScreenProps> = ({
         <ItemWrapper>
           <BlueCardHistory
             data={item}
-            projectKey={data.data.project.key}
             projectLogo={data.data.project.logoUrl}
             projectTitle={data.data.project.title}
+            fn={() => {
+              navigation.navigate("BluecardDetail", { ...item });
+            }}
+            projectFn={() => {
+              navigation.navigate("ProjectDetail", { ...item.project });
+            }}
           />
         </ItemWrapper>
       )}

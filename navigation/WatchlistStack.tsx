@@ -4,6 +4,8 @@ import { useColorScheme } from "react-native";
 import BluecardDetail from "../screens/bluecard/BluecardDetail";
 import { WatchListStackNavParamList } from "./Root";
 import WatchList from "../screens/watchlist/WatchList";
+import ProjectDetail from "../screens/project/ProjectDetail";
+import UserDetail from "../screens/user/UserDetail";
 
 const NativeStack = createNativeStackNavigator<WatchListStackNavParamList>();
 
@@ -21,6 +23,7 @@ const WatcListStack = () => {
     >
       <NativeStack.Screen name="Main" component={WatchList} />
       <NativeStack.Screen name="BluecardDetail" component={BluecardDetail} />
+      <NativeStack.Screen name="ProjectDetail" component={ProjectDetail} />
     </NativeStack.Navigator>
   );
 };

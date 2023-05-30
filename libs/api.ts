@@ -19,3 +19,8 @@ export const allNewscards = (lastId: string) =>
 
 export const watchListBluecards = (lastId: string) =>
   axiosInstance.get(`/api/bluecards?watchlist=true&previous=${lastId}`);
+
+export const userInfo = (userId: string, lastId: string) =>
+  axiosInstance.get(
+    `/api/bluecards?user=${userId}&read=true&previous=${lastId}`
+  );

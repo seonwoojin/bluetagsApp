@@ -1,9 +1,9 @@
 import styled from "styled-components/native";
 import Banner from "../../components/Banner";
-import { useInfiniteQuery, useQueryClient } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { allNewscards } from "../../libs/api";
 import { NewsCard } from "../../libs/schema";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Dimension from "../../libs/useDimension";
 import { Shadow } from "react-native-shadow-2";
 import Newscard from "../../components/newscard/Nescard";
@@ -82,10 +82,9 @@ interface NewsData {
 }
 
 const News = () => {
-  const queryClient = useQueryClient();
-  const { data, isLoading, hasNextPage, fetchNextPage } =
+  const { data, isLoading, hasNextPage, fetchNextPage, refetch } =
     useInfiniteQuery<ResponseNewsCards>(
-      ["news", "newsdetail"],
+      "news",
       ({ pageParam = "undefined" }) => allNewscards(pageParam),
       {
         getNextPageParam: (lastPage, allPages) => {
@@ -101,7 +100,7 @@ const News = () => {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await queryClient.refetchQueries(["news"]);
+    await refetch();
   };
 
   useEffect(() => {

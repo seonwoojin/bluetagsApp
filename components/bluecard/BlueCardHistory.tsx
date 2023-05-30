@@ -6,9 +6,8 @@ import { useEffect, useState } from "react";
 import { useUser } from "../../libs/context";
 import useMutation from "../../libs/useMutation";
 import { Shadow } from "react-native-shadow-2";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { HomeStackNavParamList } from "../../navigation/Root";
-import { Text, TouchableWithoutFeedback } from "react-native";
+import { TouchableWithoutFeedback } from "react-native";
 
 const BlueCardContainer = styled.View`
   align-items: center;
@@ -125,17 +124,18 @@ interface Props {
   data: BluecardWithProject;
   projectTitle: string;
   projectLogo: string;
-  projectKey: string;
+  fn: () => void;
+  projectFn: () => void;
 }
 
 export default function BlueCardHistory({
   data,
   projectTitle,
   projectLogo,
-  projectKey,
+  fn,
+  projectFn,
 }: Props) {
   const user = useUser();
-  const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
   const [isInclude, setIsInclude] = useState<boolean>(false);
   const [calendar, { loading, status }] = useMutation(
     "/api/bluecards/add-calendar"
@@ -154,15 +154,15 @@ export default function BlueCardHistory({
       distance={3}
       style={{ borderRadius: 15, height: 270 }}
     >
-      <TouchableWithoutFeedback
-        onPress={() => navigation.navigate("BluecardDetail", { ...data })}
-      >
+      <TouchableWithoutFeedback onPress={fn}>
         <BlueCardContainer>
           <TitleWrapper>
             <TitleContent>
               <TitleText numberOfLines={2}>{data.title}</TitleText>
               <ProjectTitle>
-                <ProjectTitleText>{projectTitle}</ProjectTitleText>
+                <TouchableWithoutFeedback onPress={projectFn}>
+                  <ProjectTitleText>{projectTitle}</ProjectTitleText>
+                </TouchableWithoutFeedback>
                 <Svg width="2" height="11" viewBox="0 0 2 11" fill="none">
                   <Line
                     opacity="0.5"

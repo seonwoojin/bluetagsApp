@@ -1,9 +1,12 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { HomeStackNavParamList } from "../../navigation/Root";
+import {
+  HomeStackNavParamList,
+  WatchListStackNavParamList,
+} from "../../navigation/Root";
 import styled from "styled-components/native";
 import Banner from "../../components/Banner";
 import Dimension from "../../libs/useDimension";
-import { Image } from "react-native";
+import { Image, TouchableWithoutFeedback } from "react-native";
 import { Line, Path, Svg } from "react-native-svg";
 import BlueTag from "../../components/Bluetag";
 
@@ -178,14 +181,14 @@ const Optionwrapper = styled.View`
   gap: 20px;
 `;
 
-type BluecardDetailScreenProps = NativeStackScreenProps<
-  HomeStackNavParamList,
-  "BluecardDetail"
->;
+type BluecardDetailScreenProps =
+  | NativeStackScreenProps<HomeStackNavParamList, "BluecardDetail">
+  | NativeStackScreenProps<WatchListStackNavParamList, "BluecardDetail">;
 
-const BluecardDetail: React.FC<BluecardDetailScreenProps> = ({
+const BluecardDetail = ({
   route: { params },
-}) => {
+  navigation,
+}: BluecardDetailScreenProps) => {
   return (
     <Container>
       <BannerWrapper>
@@ -218,7 +221,15 @@ const BluecardDetail: React.FC<BluecardDetailScreenProps> = ({
             )}
           </BlueCardDetailContainer>
           <BlueCardProject>
-            <BlueCardProjectTitle>{params.project.title}</BlueCardProjectTitle>
+            <TouchableWithoutFeedback
+              onPress={() =>
+                navigation.navigate("ProjectDetail", { ...params.project })
+              }
+            >
+              <BlueCardProjectTitle>
+                {params.project.title}
+              </BlueCardProjectTitle>
+            </TouchableWithoutFeedback>
             <Svg width="1" height="11" viewBox="0 0 1 11" fill="none">
               <Line
                 opacity="0.5"

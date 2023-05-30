@@ -7,6 +7,7 @@ import { HomeStackNavParamList, ProjectStackNavParamList } from "./Root";
 import WatchList from "../screens/watchlist/WatchList";
 import ProjectScreeen from "../screens/project/Project";
 import ProjectDetail from "../screens/project/ProjectDetail";
+import UserDetail from "../screens/user/UserDetail";
 
 const NativeStack = createNativeStackNavigator<ProjectStackNavParamList>();
 

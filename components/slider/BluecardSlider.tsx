@@ -47,6 +47,9 @@ const BluecardSlider = ({ data }: Props) => {
               fn={() => {
                 navigation.navigate("BluecardDetail", { ...item });
               }}
+              projectFn={() => {
+                navigation.navigate("ProjectDetail", { ...item.project });
+              }}
               data={item}
             />
           );

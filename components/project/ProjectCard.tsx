@@ -1,11 +1,14 @@
 import styled from "styled-components/native";
-import { Project } from "../../libs/schema";
+import { Project, SocialUser, User } from "../../libs/schema";
 import Dimension from "../../libs/useDimension";
 import { Line, Path, Svg } from "react-native-svg";
 import { Shadow } from "react-native-shadow-2";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { HomeStackNavParamList } from "../../navigation/Root";
 import { TouchableWithoutFeedback } from "react-native";
+import subscribeProject from "../../libs/subscribeProject";
+import { useState } from "react";
+import useMutation from "../../libs/useMutation";
 
 const Wrapper = styled.View``;
 
@@ -115,10 +118,16 @@ const Button = styled.View`
 
 interface Props {
   data: Project;
+  user: User | SocialUser | null;
+  setUser: any;
 }
 
-export default function ProjectCard({ data }: Props) {
+export default function ProjectCard({ data, user, setUser }: Props) {
   const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
+  const [subscribe, setSubscribe] = useState<string[]>(
+    user ? user.subscribe : []
+  );
+  const mutation = useMutation("https://www.bluetags.app/api/users/subscribe");
   const onPress = () => {
     navigation.navigate("ProjectDetail", { ...data });
   };
@@ -171,14 +180,27 @@ export default function ProjectCard({ data }: Props) {
               <ProjectDescriptionText>Abc DEF : ASDF</ProjectDescriptionText>
             </ProjectDescription>
           </ProjectContent>
-          <Button>
-            <Svg width="16" height="18" viewBox="0 0 16 18" fill="none">
-              <Path
-                d="M1.25032 7.96087L2.50478 9.15654L6.47003 12.7981L8.17003 11.1753C8.24284 11.0719 8.27916 10.9472 8.27326 10.8209C8.26736 10.6945 8.21958 10.5738 8.13745 10.4776L6.57628 9.13033L6.58336 9.12679L4.90391 7.52171C4.80868 7.41633 4.75721 7.27862 4.75997 7.13662C4.76274 6.99462 4.81953 6.85901 4.91878 6.75742L9.44503 2.45358L7.39511 0.5L1.25316 6.33525C1.14182 6.43935 1.05307 6.56521 0.992384 6.70503C0.931702 6.84485 0.900391 6.99564 0.900391 7.14806C0.900391 7.30048 0.931702 7.45127 0.992384 7.59109C1.05307 7.73091 1.14182 7.85677 1.25316 7.96087H1.25032ZM14.7483 10.0413L13.4946 8.84346L9.53145 5.20121L7.82366 6.824C7.7469 6.92581 7.70808 7.05122 7.7139 7.1786C7.71972 7.30597 7.76981 7.42732 7.85553 7.52171L9.41741 8.86117H9.41315L11.0912 10.4655C11.1855 10.5696 11.2359 10.7061 11.2321 10.8465C11.2283 10.9869 11.1705 11.1204 11.0707 11.2192L6.5437 15.5223L8.60565 17.5L14.7469 11.6648C14.8583 11.5607 14.9472 11.4349 15.0079 11.295C15.0687 11.1552 15.1 11.0044 15.1 10.8519C15.1 10.6995 15.0687 10.5487 15.0079 10.4088C14.9472 10.269 14.8583 10.1432 14.7469 10.0391L14.7483 10.0413Z"
-                fill="white"
-              />
-            </Svg>
-          </Button>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              subscribeProject({
+                subscribeList: subscribe,
+                setSubscribeList: setSubscribe,
+                project: data,
+                user,
+                setUser,
+                mutation,
+              });
+            }}
+          >
+            <Button>
+              <Svg width="16" height="18" viewBox="0 0 16 18" fill="none">
+                <Path
+                  d="M1.25032 7.96087L2.50478 9.15654L6.47003 12.7981L8.17003 11.1753C8.24284 11.0719 8.27916 10.9472 8.27326 10.8209C8.26736 10.6945 8.21958 10.5738 8.13745 10.4776L6.57628 9.13033L6.58336 9.12679L4.90391 7.52171C4.80868 7.41633 4.75721 7.27862 4.75997 7.13662C4.76274 6.99462 4.81953 6.85901 4.91878 6.75742L9.44503 2.45358L7.39511 0.5L1.25316 6.33525C1.14182 6.43935 1.05307 6.56521 0.992384 6.70503C0.931702 6.84485 0.900391 6.99564 0.900391 7.14806C0.900391 7.30048 0.931702 7.45127 0.992384 7.59109C1.05307 7.73091 1.14182 7.85677 1.25316 7.96087H1.25032ZM14.7483 10.0413L13.4946 8.84346L9.53145 5.20121L7.82366 6.824C7.7469 6.92581 7.70808 7.05122 7.7139 7.1786C7.71972 7.30597 7.76981 7.42732 7.85553 7.52171L9.41741 8.86117H9.41315L11.0912 10.4655C11.1855 10.5696 11.2359 10.7061 11.2321 10.8465C11.2283 10.9869 11.1705 11.1204 11.0707 11.2192L6.5437 15.5223L8.60565 17.5L14.7469 11.6648C14.8583 11.5607 14.9472 11.4349 15.0079 11.295C15.0687 11.1552 15.1 11.0044 15.1 10.8519C15.1 10.6995 15.0687 10.5487 15.0079 10.4088C14.9472 10.269 14.8583 10.1432 14.7469 10.0391L14.7483 10.0413Z"
+                  fill="white"
+                />
+              </Svg>
+            </Button>
+          </TouchableWithoutFeedback>
         </ProjectWrapper>
       </TouchableWithoutFeedback>
     </Shadow>

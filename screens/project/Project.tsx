@@ -1,10 +1,10 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { Project } from "../../libs/schema";
 import { allProjects } from "../../libs/api";
 import ProjectItem from "./../../components/project/ProjectItem";
 import Dimension from "../../libs/useDimension";
 import styled from "styled-components/native";
-import { FlatList, View } from "react-native";
+import { FlatList } from "react-native";
 import Banner from "../../components/Banner";
 import { useState } from "react";
 import Title from "../../components/Title";
@@ -38,18 +38,16 @@ interface ProjectsResponse {
 }
 
 const ProjectScreeen = () => {
-  const { user } = useUser();
-  console.log(user);
-  const queryClient = useQueryClient();
-  const { data, isLoading } = useQuery<ProjectsResponse>(
-    ["projectquery", "projects"],
+  const { user, setUser } = useUser();
+  const { data, isLoading, refetch } = useQuery<ProjectsResponse>(
+    "projects",
     allProjects
   );
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await queryClient.refetchQueries(["projectquery"]);
+    await refetch();
     setRefreshing(false);
   };
 
@@ -70,12 +68,13 @@ const ProjectScreeen = () => {
       renderItem={({ item, index }) =>
         index === 0 ? (
           <ProjectList>
-            <ProjectItem subscribeList={[]} />
+            <ProjectItem user={user} setUser={setUser} />
           </ProjectList>
         ) : (
           <ProjectList>
             <ProjectItem
-              subscribeList={user ? user.subscribe : []}
+              user={user}
+              setUser={setUser}
               project={item as Project}
             />
           </ProjectList>

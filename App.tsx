@@ -10,10 +10,16 @@ import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserContext } from "./libs/context";
 import { SocialUser, User } from "./libs/schema";
+import Toast from "react-native-toast-message";
+import ToastSuccess from "./components/ToastSuccess";
 
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
+
+const toastConfig = {
+  success: (props: { text1?: string }) => <ToastSuccess text1={props.text1!} />,
+};
 
 export default function App() {
   //rAsyncStorage.clear();
@@ -69,6 +75,7 @@ export default function App() {
           <NavigationContainer onReady={onLayoutRootView}>
             <StatusBar backgroundColor="white" />
             <Root />
+            <Toast config={toastConfig} />
           </NavigationContainer>
         </ThemeProvider>
       </QueryClientProvider>

@@ -1,15 +1,9 @@
 import styled from "styled-components/native";
 import { BluecardWithProject } from "../../libs/schema";
 import { Shadow } from "react-native-shadow-2";
-import { Text, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { Text, TouchableWithoutFeedback } from "react-native";
 import { Path, Svg } from "react-native-svg";
 import BlueTag from "../Bluetag";
-import {
-  NavigationProp,
-  NavigatorScreenParams,
-  useNavigation,
-} from "@react-navigation/native";
-import { HomeStackNavParamList } from "../../navigation/Root";
 
 const BlueCardContainer = styled.View`
   position: relative;
@@ -114,11 +108,12 @@ const PostBlueTags = styled.View`
 interface Props {
   data: BluecardWithProject;
   fn: () => void;
+  projectFn: () => void;
 }
 
 const week = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
-const BlueCardMedium = ({ data, fn }: Props) => {
+const BlueCardMedium = ({ data, fn, projectFn }: Props) => {
   return (
     <Shadow
       startColor="rgba(0, 0, 0, 0.03)"
@@ -140,20 +135,22 @@ const BlueCardMedium = ({ data, fn }: Props) => {
           </BlueCardBackGround>
           <BlueCardText>
             <TitleContainer>
-              <ProjectLogo>
-                <Shadow
-                  startColor="rgba(0, 0, 0, 0.15)"
-                  offset={[0, 2]}
-                  distance={4}
-                  style={{
-                    borderRadius: 4,
-                    width: 45,
-                    height: 45,
-                  }}
-                >
-                  <LogoImage source={{ uri: data.project.logoUrl }} />
-                </Shadow>
-              </ProjectLogo>
+              <TouchableWithoutFeedback onPress={projectFn}>
+                <ProjectLogo>
+                  <Shadow
+                    startColor="rgba(0, 0, 0, 0.15)"
+                    offset={[0, 2]}
+                    distance={4}
+                    style={{
+                      borderRadius: 4,
+                      width: 45,
+                      height: 45,
+                    }}
+                  >
+                    <LogoImage source={{ uri: data.project.logoUrl }} />
+                  </Shadow>
+                </ProjectLogo>
+              </TouchableWithoutFeedback>
               <PostTitle>
                 <PostTitleText numberOfLines={2}>{data.title}</PostTitleText>
               </PostTitle>

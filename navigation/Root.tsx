@@ -1,4 +1,3 @@
-import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
 import { NavigatorScreenParams } from "@react-navigation/native";
@@ -18,11 +17,22 @@ export type HomeStackNavParamList = {
   Main: undefined;
   BluecardDetail: BluecardWithProject;
   ProjectDetail: Project;
+  UserDetail: undefined;
+  Search: { query: string };
+};
+
+export type NewsStackNavParamList = {
+  Main: undefined;
 };
 
 export type WatchListStackNavParamList = {
   Main: undefined;
   BluecardDetail: BluecardWithProject;
+  ProjectDetail: Project;
+};
+
+export type CalendarStackNavParamList = {
+  Main: undefined;
 };
 
 export type ProjectStackNavParamList = {

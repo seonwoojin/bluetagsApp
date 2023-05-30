@@ -5,11 +5,12 @@ import { useQuery, useQueryClient } from "react-query";
 import { allProjects, homeBluecards } from "../libs/api";
 import { BluecardWithProject, Project } from "../libs/schema";
 import BluecardSlider from "../components/slider/BluecardSlider";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ProjectCardSlider from "../components/slider/ProjectCardSlider";
 import { useUser } from "../libs/context";
-import { useFocusEffect } from "@react-navigation/native";
 import { RefreshControl } from "react-native";
+import { HomeStackNavParamList } from "../navigation/Root";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 const Wrapper = styled.ScrollView``;
 
@@ -25,7 +26,10 @@ interface ProjectsResponse {
   };
 }
 
-const Home = () => {
+const Home: React.FC<NativeStackScreenProps<HomeStackNavParamList, "Main">> = ({
+  navigation,
+}) => {
+  const { user, setUser } = useUser();
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery<Response>(
     ["homequery", "home"],
@@ -70,7 +74,11 @@ const Home = () => {
       ) : null}
       <Title title="Project" />
       {sortedProjects.length > 0 ? (
-        <ProjectCardSlider data={sortedProjects} />
+        <ProjectCardSlider
+          data={sortedProjects}
+          user={user}
+          setUser={setUser}
+        />
       ) : null}
     </Wrapper>
   );
