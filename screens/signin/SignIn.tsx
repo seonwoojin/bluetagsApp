@@ -14,6 +14,7 @@ import { useUser } from "../../libs/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
+import onNext from "../../libs/nextRef";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -258,9 +259,6 @@ const SignIn = ({ navigation }: SignInScreenProps) => {
     if (!regex.test(email))
       setError("email", { message: "이메일 양식 이상함" });
     return regex.test(email);
-  };
-  const onNext = (nextOne: React.MutableRefObject<any>) => {
-    nextOne?.current?.focus();
   };
   const onValid = (data: LoginForm) => {
     if (loading) return;

@@ -24,3 +24,11 @@ export const userInfo = (userId: string, lastId: string) =>
   axiosInstance.get(
     `/api/bluecards?user=${userId}&read=true&previous=${lastId}`
   );
+
+export const searchProjects = (query: string) =>
+  axiosInstance.get(`/api/search/projects?q=${query}`);
+
+export const searchBluecards = (query: string, lastID: string) =>
+  axiosInstance.get(`/api/search/bluecards?q=${query}&previous=${lastID}`);
+
+export const notifications = () => axiosInstance.get("/api/notifications");

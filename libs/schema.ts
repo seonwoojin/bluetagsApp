@@ -4,6 +4,13 @@ enum Survey {
   "HOLD",
 }
 
+export enum d {
+  "CREATE",
+  "UPDATE",
+  "HOUR",
+  "DAY",
+}
+
 export type Project = {
   id: string;
   key: string;
@@ -95,4 +102,16 @@ export type NewsCard = {
   imgURL: string[];
   like: number;
   unlike: number;
+};
+
+export type Notification = {
+  id: string;
+  createdAt: Date;
+  blueCardId: string;
+  projectKey: string;
+  projectLogo: string | null;
+  projectTitle: string | null;
+  title: string;
+  thumbnail: string | null;
+  role: "CREATE" | "UPDATE" | "HOUR" | "DAY";
 };

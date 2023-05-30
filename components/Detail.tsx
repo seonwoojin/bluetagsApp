@@ -17,7 +17,7 @@ import { HomeStackNavParamList } from "../navigation/Root";
 const Overlay = styled.View`
   position: absolute;
   width: ${Dimension.width}px;
-  height: 2000px;
+  height: ${Dimension.height * 1.2}px;
   top: 0;
   z-index: 50;
   background-color: rgba(0, 0, 0, 0.3);
@@ -100,6 +100,11 @@ export default function Detail({ detail, setDetail }: Props) {
   const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
   const X = new Animated.Value(Dimension.width * 0.8);
 
+  const opacity = X.interpolate({
+    inputRange: [0, Dimension.width * 0.8],
+    outputRange: [1, 0],
+  });
+
   const moveLeft = () => {
     Animated.timing(X, {
       toValue: 0,
@@ -130,7 +135,9 @@ export default function Detail({ detail, setDetail }: Props) {
       >
         <Overlay />
       </TouchableWithoutFeedback>
-      <AnimatedUserTextDetail style={{ transform: [{ translateX: X }] }}>
+      <AnimatedUserTextDetail
+        style={{ transform: [{ translateX: X }], opacity }}
+      >
         <Exit>
           <TouchableWithoutFeedback
             onPress={() => {

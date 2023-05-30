@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useColorScheme } from "react-native";
 import { TabNavParamList } from "./Root";
-import News from "../screens/news/News";
-import Calendar from "../screens/calendar/Calendar";
 import Svg, { Path } from "react-native-svg";
 import Header from "../components/Header";
 import Constants from "expo-constants";
@@ -13,12 +11,13 @@ import ProjectStack from "./ProjectStack";
 import Detail from "../components/Detail";
 import NewsStack from "./NewsStack";
 import CalendarStack from "./CalendarStack";
+import Notice from "../components/Notice";
 
 const Tab = createBottomTabNavigator<TabNavParamList>();
 
 const Tabs = () => {
   const [detail, setDetail] = useState(false);
-  const [notice, setNotice] = useState(false);
+  const [notice, setNotice] = useState(true);
   const isDark = useColorScheme() === "dark";
   return (
     <>
@@ -122,6 +121,7 @@ const Tabs = () => {
         />
       </Tab.Navigator>
       {detail ? <Detail detail={detail} setDetail={setDetail} /> : null}
+      {notice ? <Notice notice={notice} setNotice={setNotice} /> : null}
     </>
   );
 };

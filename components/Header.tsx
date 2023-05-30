@@ -1,13 +1,14 @@
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { ParamListBase } from "@react-navigation/native";
-import { TouchableWithoutFeedback, View } from "react-native";
+import { TextInput, TouchableWithoutFeedback, View } from "react-native";
 import styled from "styled-components/native";
 import { Circle, Path, Svg } from "react-native-svg";
 import Logo from "./Logo";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useUser } from "../libs/context";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Dimension from "../libs/useDimension";
+import onNext from "../libs/nextRef";
 
 const Wrapper = styled.View`
   position: relative;
@@ -53,7 +54,7 @@ const SearchInput = styled.TextInput`
   width: 100%;
   height: 100%;
   margin-right: 20px;
-  padding: 0 20px;
+  padding: 0 10px;
   font-size: 12px;
   color: #2e57ff;
   font-weight: 700;
@@ -79,48 +80,63 @@ const Header = ({
   const { user, setUser } = useUser();
   const [search, setSearch] = useState(false);
   const [query, setQuery] = useState("");
+  const searchRef = useRef<TextInput>(null);
 
   return (
     <Wrapper>
-      {search ? (
-        <>
-          <TouchableWithoutFeedback onPress={() => setSearch((prev) => !prev)}>
-            <Svg
-              width={20}
-              height={20}
-              fill={"#0075ff"}
-              style={{ opacity: 0.8, marginRight: 10 }}
-              viewBox="0 0 448 512"
-            >
-              <Path d="M448 256C448 264.8 440.6 272 431.4 272H54.11l140.7 149.3c6.157 6.531 5.655 16.66-1.118 22.59C190.5 446.6 186.5 448 182.5 448c-4.505 0-9.009-1.75-12.28-5.25l-165.9-176c-5.752-6.094-5.752-15.41 0-21.5l165.9-176c6.19-6.562 16.69-7 23.45-1.094c6.773 5.938 7.275 16.06 1.118 22.59L54.11 240h377.3C440.6 240 448 247.2 448 256z" />
-            </Svg>
-          </TouchableWithoutFeedback>
-          <SearchForm>
-            <SearchInput
-              autoCapitalize="none"
-              onChangeText={(text) => setQuery(text)}
-              onSubmitEditing={() => navigation.navigate("Search", { query })}
-            />
-          </SearchForm>
-        </>
-      ) : (
+      <View
+        style={{
+          display: search ? "flex" : "none",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
         <TouchableWithoutFeedback
           onPress={() => {
-            navigation.navigate("Home", { screen: "Main" });
+            setSearch((prev) => !prev);
+            searchRef.current?.blur();
           }}
         >
-          <View>
-            <Logo />
-          </View>
+          <Svg
+            width={20}
+            height={20}
+            fill={"#0075ff"}
+            style={{ opacity: 0.8, marginRight: 10 }}
+            viewBox="0 0 448 512"
+          >
+            <Path d="M448 256C448 264.8 440.6 272 431.4 272H54.11l140.7 149.3c6.157 6.531 5.655 16.66-1.118 22.59C190.5 446.6 186.5 448 182.5 448c-4.505 0-9.009-1.75-12.28-5.25l-165.9-176c-5.752-6.094-5.752-15.41 0-21.5l165.9-176c6.19-6.562 16.69-7 23.45-1.094c6.773 5.938 7.275 16.06 1.118 22.59L54.11 240h377.3C440.6 240 448 247.2 448 256z" />
+          </Svg>
         </TouchableWithoutFeedback>
-      )}
+        <SearchForm>
+          <SearchInput
+            ref={searchRef}
+            autoCapitalize="none"
+            onChangeText={(text) => setQuery(text)}
+            onSubmitEditing={() => {
+              if (query !== "") navigation.navigate("Search", { query });
+            }}
+            value={query}
+            placeholder="Search..."
+          />
+        </SearchForm>
+      </View>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          navigation.navigate("Home", { screen: "Main" });
+        }}
+      >
+        <View style={{ display: search ? "none" : "flex" }}>
+          <Logo />
+        </View>
+      </TouchableWithoutFeedback>
       <UserContainer>
         <TouchableWithoutFeedback
           onPress={() => {
             if (!search) {
               setSearch((prev) => !prev);
+              onNext(searchRef);
             } else {
-              navigation.navigate("Search", { query });
+              if (query !== "") navigation.navigate("Search", { query });
             }
           }}
         >
