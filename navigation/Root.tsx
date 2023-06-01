@@ -32,7 +32,13 @@ export type WatchListStackNavParamList = {
 };
 
 export type CalendarStackNavParamList = {
-  Main: { setCalendarDetail: React.Dispatch<React.SetStateAction<boolean>> };
+  Main: {
+    setCalendarDetail: React.Dispatch<React.SetStateAction<string>>;
+    setToDos: React.Dispatch<React.SetStateAction<BluecardWithProject[]>>;
+    setTodayDate: React.Dispatch<React.SetStateAction<Date>>;
+  };
+  BluecardDetail: { data?: BluecardWithProject; bluecardId?: string };
+  ProjectDetail: Project;
 };
 
 export type ProjectStackNavParamList = {

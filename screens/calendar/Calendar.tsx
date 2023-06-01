@@ -1,11 +1,13 @@
 import styled from "styled-components/native";
 import Dimension from "../../libs/useDimension";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Path, Svg } from "react-native-svg";
 import { TouchableWithoutFeedback, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
 import axios from "axios";
-import { BluecardWithProject } from "../../libs/schema";
+import { BluecardWithProject, Project } from "../../libs/schema";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { CalendarStackNavParamList } from "../../navigation/Root";
 
 const Scroll = styled.ScrollView``;
 
@@ -442,6 +444,7 @@ interface Props {
 }
 
 const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
+  const navigation = useNavigation<NavigationProp<CalendarStackNavParamList>>();
   const [date, setDate] = useState(new Date());
   const [weeks, setWeeks] = useState(getRemainWeeks(new Date(), []));
   const [yearArray, setYearArray] = useState<number[]>([]);
@@ -459,7 +462,8 @@ const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
         .then((response) => {
           setYearArray((prev) => [...prev, date.getFullYear()]);
           setCalendarDatas((prev) => [...prev, ...response.data.bluecards]);
-        });
+        })
+        .catch((error) => console.log(error));
     }
   }, [date.getFullYear(), yearArray]);
 

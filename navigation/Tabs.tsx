@@ -12,8 +12,21 @@ import Detail from "../components/tabs/Detail";
 import NewsStack from "./NewsStack";
 import CalendarStack from "./CalendarStack";
 import Notice from "../components/tabs/Notice";
-import NoticeDetail from "../components/tabs/NoticeDetail";
-import { BluecardWithProject } from "../libs/schema";
+import CalendarDetail from "../components/tabs/CalendarDetail";
+import { BluecardWithProject, Project } from "../libs/schema";
+import styled from "styled-components/native";
+import Dimension from "../libs/useDimension";
+
+const Overlay = styled.View`
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width: ${Dimension.width}px;
+  height: ${Dimension.height * 1.2}px;
+  top: 0;
+  z-index: 50;
+  background-color: rgba(0, 0, 0, 0.3);
+`;
 
 const Tab = createBottomTabNavigator<TabNavParamList>();
 
@@ -136,7 +149,7 @@ const Tabs = () => {
       {notice ? <Notice notice={notice} setNotice={setNotice} /> : null}
       {detail ? <Detail detail={detail} setDetail={setDetail} /> : null}
       {calendarDetail !== "" ? (
-        <NoticeDetail
+        <CalendarDetail
           todayDate={todayDate}
           toDos={toDos}
           setCalendarDetail={setCalendarDetail}

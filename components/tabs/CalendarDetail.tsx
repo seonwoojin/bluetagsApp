@@ -9,8 +9,10 @@ import {
 import { Path, Svg } from "react-native-svg";
 import BlueTag from "../Bluetag";
 import { BluecardWithProject } from "../../libs/schema";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Shadow } from "react-native-shadow-2";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { CalendarStackNavParamList } from "../../navigation/Root";
 
 const Overlay = styled.View`
   position: absolute;
@@ -82,18 +84,15 @@ const Wrapper = styled.View`
   height: auto;
 `;
 
-// const VerticalBar = styled.View<{ height: number }>`
-//   position: absolute;
-//   width: 1px;
-//   height: ${(props) => (props.height > 0 ? `${props.height - 80}px` : `70%`)};
-//   background-color: rgba(0, 0, 0, 0.1);
-//   left: calc(50px);
-//   top: calc(80px);
-//   z-index: -1;
-//   @media ${breakingPoint.device.mobile} {
-//     left: calc(45px);
-//   }
-// `;
+const VerticalBar = styled.View<{ height: number }>`
+  position: absolute;
+  width: 1px;
+  height: ${(props) => (props.height > 0 ? `${props.height - 80}px` : `0px`)};
+  background-color: rgba(0, 0, 0, 0.1);
+  left: 35px;
+  top: 80px;
+  z-index: -1;
+`;
 
 const HorizontalBar = styled.View`
   position: absolute;
@@ -226,10 +225,6 @@ const BluetagsWrapper = styled.View<{ detail: string }>`
   margin-bottom: 0px;
 `;
 
-const BluetagsWrapperText = styled.Text`
-  font-size: 15px;
-`;
-
 interface Props {
   toDos: BluecardWithProject[];
   todayDate: Date;
@@ -238,11 +233,17 @@ interface Props {
 
 const week = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
-export default function NoticeDetail({
+export default function CalendarDetail({
   setCalendarDetail,
   toDos: allTodos,
   todayDate,
 }: Props) {
+  const navigation = useNavigation<NavigationProp<CalendarStackNavParamList>>();
+  const titleRef = useRef() as React.MutableRefObject<View>;
+  const timeRef = useRef() as React.MutableRefObject<View>;
+  const [verticalHeight, setVerticalHeight] = useState(0);
+  const [titleHeight, setTitleHeight] = useState(0);
+  const [timeHeight, setTimeHeight] = useState(0);
   const [detail1, setDetail1] = useState("");
   const [toDos, setToDos] = useState<BluecardWithProject[]>([]);
   useEffect(() => {
@@ -263,6 +264,18 @@ export default function NoticeDetail({
     );
   }, [todayDate]);
 
+  useEffect(() => {
+    titleRef.current?.measureInWindow((x, y, width, height) => {
+      console.log(height);
+    });
+  }, [titleRef.current, detail1]);
+
+  useEffect(() => {
+    if (timeHeight > 0 && timeHeight > 0) {
+      setVerticalHeight(timeHeight - titleHeight);
+    }
+  }, [timeHeight, titleHeight]);
+
   return (
     <>
       <TouchableWithoutFeedback
@@ -272,8 +285,17 @@ export default function NoticeDetail({
       >
         <Overlay>
           <TouchableWithoutFeedback>
-            <DetailDate>
-              {/* <VerticalBar height={verticalHeight} /> */}
+            <DetailDate
+              onLayout={() => {
+                titleRef.current.measureInWindow((x, y, width, height) => {
+                  if (y) {
+                    setTitleHeight(y);
+                  }
+                });
+              }}
+              ref={titleRef}
+            >
+              <VerticalBar height={verticalHeight} />
               <DetailDateTitle>
                 <Shadow
                   distance={2}
@@ -319,7 +341,20 @@ export default function NoticeDetail({
                           }}
                         />
                         <Shadow distance={1} startColor="rgba(0, 0, 0, 0.16)">
-                          <Time>
+                          <Time
+                            onLayout={() => {
+                              if (index === toDos.length - 1) {
+                                timeRef.current.measureInWindow(
+                                  (x, y, width, height) => {
+                                    if (y) {
+                                      setTimeHeight(y);
+                                    }
+                                  }
+                                );
+                              }
+                            }}
+                            ref={index === toDos.length - 1 ? timeRef : null}
+                          >
                             <TimeText>
                               {`${
                                 new Date(toDo.deadLineStart!).getHours() < 10
@@ -343,11 +378,20 @@ export default function NoticeDetail({
                             }}
                           >
                             <DetailDateToDo>
-                              <DetailDateToDoLogo>
-                                <DetailDateToDoLogoImage
-                                  source={{ uri: toDo.project.logoUrl }}
-                                />
-                              </DetailDateToDoLogo>
+                              <TouchableWithoutFeedback
+                                onPress={() => {
+                                  setCalendarDetail("");
+                                  navigation.navigate("ProjectDetail", {
+                                    ...toDo.project,
+                                  });
+                                }}
+                              >
+                                <DetailDateToDoLogo>
+                                  <DetailDateToDoLogoImage
+                                    source={{ uri: toDo.project.logoUrl }}
+                                  />
+                                </DetailDateToDoLogo>
+                              </TouchableWithoutFeedback>
                               <DetailDateToDoLogoTitle
                                 detail={detail1 === toDo.id ? "true" : "false"}
                               >
@@ -409,9 +453,18 @@ export default function NoticeDetail({
                               {toDo.summary}
                             </DetailDescriptionText>
                           </DetailDescription>
-                          <Button detail={"true"}>
-                            <ButtonText>Show Detail</ButtonText>
-                          </Button>
+                          <TouchableWithoutFeedback
+                            onPress={() => {
+                              navigation.navigate("BluecardDetail", {
+                                data: toDo,
+                              });
+                              setCalendarDetail("");
+                            }}
+                          >
+                            <Button detail={"true"}>
+                              <ButtonText>Show Detail</ButtonText>
+                            </Button>
+                          </TouchableWithoutFeedback>
                         </DetailDateToDoWrapper>
                       </Wrapper>
                     ))
@@ -433,7 +486,20 @@ export default function NoticeDetail({
                             }}
                           />
                           <Shadow distance={1} startColor="rgba(0, 0, 0, 0.16)">
-                            <Time>
+                            <Time
+                              onLayout={() => {
+                                if (index === toDos.length - 1) {
+                                  timeRef.current.measureInWindow(
+                                    (x, y, width, height) => {
+                                      if (y) {
+                                        setTimeHeight(y);
+                                      }
+                                    }
+                                  );
+                                }
+                              }}
+                              ref={index === toDos.length - 1 ? timeRef : null}
+                            >
                               <TimeText>
                                 {`${
                                   new Date(toDo.deadLineStart!).getHours() < 10
@@ -458,11 +524,20 @@ export default function NoticeDetail({
                               }}
                             >
                               <DetailDateToDo>
-                                <DetailDateToDoLogo>
-                                  <DetailDateToDoLogoImage
-                                    source={{ uri: toDo.project.logoUrl }}
-                                  />
-                                </DetailDateToDoLogo>
+                                <TouchableWithoutFeedback
+                                  onPress={() => {
+                                    setCalendarDetail("");
+                                    navigation.navigate("ProjectDetail", {
+                                      ...toDo.project,
+                                    });
+                                  }}
+                                >
+                                  <DetailDateToDoLogo>
+                                    <DetailDateToDoLogoImage
+                                      source={{ uri: toDo.project.logoUrl }}
+                                    />
+                                  </DetailDateToDoLogo>
+                                </TouchableWithoutFeedback>
                                 <DetailDateToDoLogoTitle
                                   detail={
                                     detail1 === toDo.id ? "true" : "false"
@@ -538,11 +613,20 @@ export default function NoticeDetail({
                                 {toDo.summary}
                               </DetailDescriptionText>
                             </DetailDescription>
-                            <Button
-                              detail={detail1 === toDo.id ? "true" : "false"}
+                            <TouchableWithoutFeedback
+                              onPress={() => {
+                                navigation.navigate("BluecardDetail", {
+                                  data: toDo,
+                                });
+                                setCalendarDetail("");
+                              }}
                             >
-                              <ButtonText>Show Detail</ButtonText>
-                            </Button>
+                              <Button
+                                detail={detail1 === toDo.id ? "true" : "false"}
+                              >
+                                <ButtonText>Show Detail</ButtonText>
+                              </Button>
+                            </TouchableWithoutFeedback>
                           </DetailDateToDoWrapper>
                         </Wrapper>
                       ))
