@@ -1,7 +1,11 @@
 import axios from "axios";
+import { useUser } from "./context";
 
 const axiosInstance = axios.create({
   baseURL: "https://www.bluetags.app",
+  headers: {
+    Authorization: `Bearer`,
+  },
 });
 
 export const homeBluecards = () => axiosInstance.get("/api/bluecards");
@@ -32,3 +36,6 @@ export const searchBluecards = (query: string, lastID: string) =>
   axiosInstance.get(`/api/search/bluecards?q=${query}&previous=${lastID}`);
 
 export const notifications = () => axiosInstance.get("/api/notifications");
+
+export const bluecardDetail = (id: string) =>
+  axiosInstance.get(`/api/bluecards/${id}`);

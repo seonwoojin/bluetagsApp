@@ -12,6 +12,8 @@ import { UserContext } from "./libs/context";
 import { SocialUser, User } from "./libs/schema";
 import Toast from "react-native-toast-message";
 import ToastSuccess from "./components/ToastSuccess";
+import axios from "axios";
+import useInterval from "./libs/useInterval";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,19 +23,72 @@ const toastConfig = {
   success: (props: { text1?: string }) => <ToastSuccess text1={props.text1!} />,
 };
 
+interface Response {
+  user: User | SocialUser;
+  token?: string;
+}
+
 export default function App() {
-  //rAsyncStorage.clear();
+  //AsyncStorage.clear();
   const [appIsReady, setAppIsReady] = useState(false);
   const [user, setUser] = useState<User | SocialUser | null>(null);
+  const [token, setToken] = useState<string | null>();
   const isDark = useColorScheme() === "dark";
 
+  const storeToken = async (value: string) => {
+    try {
+      await AsyncStorage.setItem("token", value);
+    } catch (e) {}
+  };
+
+  const getUser = async (newToken?: string) => {
+    try {
+      if (newToken) {
+        const data = await axios.get<Response>(
+          "https://www.bluetags.app/api/users/mobile",
+          {
+            headers: { Authorization: `Bearer ${newToken}` },
+          }
+        );
+        if (data.data.token === "ExpiredError") {
+          return;
+        }
+        if (data.data.token) {
+          await storeToken(data.data.token);
+          setToken(data.data.token);
+        }
+        setUser(data.data.user);
+      } else if (token) {
+        const data = await axios.get<Response>(
+          "https://www.bluetags.app/api/users/mobile",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (data.data.token) {
+          await storeToken(data.data.token);
+          setToken(data.data.token);
+        }
+        setUser(data.data.user);
+      }
+    } catch (error) {
+      setUser(null);
+      setToken(null);
+      await AsyncStorage.removeItem("token");
+    }
+  };
+
+  useInterval(async () => {
+    await getUser();
+  }, 60000);
+
   useEffect(() => {
-    const getUser = async () => {
+    const getToken = async () => {
       try {
-        const value = await AsyncStorage.getItem("user");
-        setUser(value != null ? JSON.parse(value) : null);
+        const value = await AsyncStorage.getItem("token");
         if (value !== null) {
-          // value previously stored
+          setToken(value);
+          getUser(value);
         }
       } catch (e) {
         // error reading value
@@ -41,7 +96,7 @@ export default function App() {
     };
     async function prepare() {
       try {
-        await getUser();
+        await getToken();
         await new Promise((resolve: any) => setTimeout(resolve, 2000));
       } catch (e) {
         console.warn(e);
@@ -69,7 +124,7 @@ export default function App() {
   }
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, setToken }}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
           <NavigationContainer onReady={onLayoutRootView}>

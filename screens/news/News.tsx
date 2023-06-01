@@ -8,6 +8,7 @@ import Dimension from "../../libs/useDimension";
 import { Shadow } from "react-native-shadow-2";
 import Newscard from "../../components/newscard/Nescard";
 import { FlatList } from "react-native";
+import Spinner from "../../components/Spinner";
 
 const Wrapper = styled.View`
   align-items: center;
@@ -152,7 +153,9 @@ const News = () => {
     }
   }, [refreshing]);
 
-  return data ? (
+  return isLoading ? (
+    <Spinner />
+  ) : (
     <FlatList
       onRefresh={onRefresh}
       refreshing={refreshing}
@@ -193,7 +196,7 @@ const News = () => {
         </ItemWrapper>
       )}
     />
-  ) : null;
+  );
 };
 
 export default News;

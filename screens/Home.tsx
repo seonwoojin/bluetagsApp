@@ -11,8 +11,15 @@ import { useUser } from "../libs/context";
 import { RefreshControl } from "react-native";
 import { HomeStackNavParamList } from "../navigation/Root";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import Spinner from "../components/Spinner";
 
 const Wrapper = styled.ScrollView``;
+
+const SpinnerWrapper = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
 
 interface Response {
   data: {
@@ -61,7 +68,11 @@ const Home: React.FC<NativeStackScreenProps<HomeStackNavParamList, "Main">> = ({
     setRefreshing(false);
   };
 
-  return (
+  const loading = isLoading || projectLoading;
+
+  return loading ? (
+    <Spinner />
+  ) : (
     <Wrapper
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

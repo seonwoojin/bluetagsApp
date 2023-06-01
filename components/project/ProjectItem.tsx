@@ -2,11 +2,21 @@ import { Path, Svg } from "react-native-svg";
 import styled from "styled-components/native";
 import { Project, SocialUser, User } from "../../libs/schema";
 import { Text, TouchableWithoutFeedback, View } from "react-native";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { ProjectStackNavParamList } from "../../navigation/Root";
+import {
+  CompositeNavigationProp,
+  NavigationProp,
+  useNavigation,
+} from "@react-navigation/native";
+import {
+  ProjectStackNavParamList,
+  RootNavParamList,
+  TabNavParamList,
+} from "../../navigation/Root";
 import subscribeProject from "../../libs/subscribeProject";
 import { useEffect, useState } from "react";
 import useMutation from "../../libs/useMutation";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const ProjectContainer = styled.View`
   flex-direction: row;
@@ -116,8 +126,13 @@ interface Props {
   setUser: any;
 }
 
+type NavigationProps = CompositeNavigationProp<
+  BottomTabNavigationProp<TabNavParamList, "Project">,
+  NativeStackNavigationProp<RootNavParamList>
+>;
+
 export default function ProjectItem({ project, user, setUser }: Props) {
-  const navigation = useNavigation<NavigationProp<ProjectStackNavParamList>>();
+  const navigation = useNavigation<NavigationProps>();
   const [subscribe, setSubscribe] = useState<string[]>(
     user ? user.subscribe : []
   );
@@ -134,7 +149,10 @@ export default function ProjectItem({ project, user, setUser }: Props) {
   ) : (
     <TouchableWithoutFeedback
       onPress={() => {
-        navigation.navigate("ProjectDetail", { ...project });
+        navigation.navigate("Project", {
+          screen: "ProjectDetail",
+          params: { ...project },
+        });
       }}
     >
       <ProjectContainer>
@@ -158,14 +176,17 @@ export default function ProjectItem({ project, user, setUser }: Props) {
         </Container>
         <TouchableWithoutFeedback
           onPress={() => {
-            subscribeProject({
-              subscribeList: subscribe,
-              setSubscribeList: setSubscribe,
-              project,
-              user,
-              setUser,
-              mutation,
-            });
+            if (!user) {
+              navigation.navigate("SignIn");
+            } else
+              subscribeProject({
+                subscribeList: subscribe,
+                setSubscribeList: setSubscribe,
+                project,
+                user,
+                setUser,
+                mutation,
+              });
           }}
         >
           <SubscribeButton>

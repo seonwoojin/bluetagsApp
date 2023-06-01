@@ -15,7 +15,7 @@ export type TabNavParamList = {
 
 export type HomeStackNavParamList = {
   Main: undefined;
-  BluecardDetail: BluecardWithProject;
+  BluecardDetail: { data?: BluecardWithProject; bluecardId?: string };
   ProjectDetail: Project;
   UserDetail: undefined;
   Search: { query: string };
@@ -27,12 +27,12 @@ export type NewsStackNavParamList = {
 
 export type WatchListStackNavParamList = {
   Main: undefined;
-  BluecardDetail: BluecardWithProject;
+  BluecardDetail: { data?: BluecardWithProject; bluecardId?: string };
   ProjectDetail: Project;
 };
 
 export type CalendarStackNavParamList = {
-  Main: undefined;
+  Main: { setCalendarDetail: React.Dispatch<React.SetStateAction<boolean>> };
 };
 
 export type ProjectStackNavParamList = {

@@ -4,7 +4,8 @@ import { SocialUser, User } from "./schema";
 export const UserContext = React.createContext<{
   user: User | SocialUser | null;
   setUser: any;
-}>({ user: null, setUser: null });
+  setToken: any;
+}>({ user: null, setUser: null, setToken: null });
 
 export const useUser = () => {
   return useContext(UserContext);

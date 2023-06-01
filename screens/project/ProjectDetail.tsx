@@ -11,6 +11,7 @@ import { FlatList, TouchableWithoutFeedback, View } from "react-native";
 import BlueCardHistory from "../../components/bluecard/BlueCardHistory";
 import Dimension from "../../libs/useDimension";
 import { Shadow } from "react-native-shadow-2";
+import Spinner from "../../components/Spinner";
 
 const Container = styled.View`
   align-items: center;
@@ -144,7 +145,11 @@ const ProjectDetail: React.FC<ProjectDetailScreenProps> = ({
     setRefreshing(false);
   };
 
-  return data?.data.project && blueCardsData ? (
+  const loading = isLoading || blueCardsLoading;
+
+  return loading ? (
+    <Spinner />
+  ) : data && blueCardsData ? (
     <FlatList
       contentContainerStyle={{ paddingBottom: 30 }}
       onRefresh={onRefresh}
@@ -215,7 +220,7 @@ const ProjectDetail: React.FC<ProjectDetailScreenProps> = ({
             projectLogo={data.data.project.logoUrl}
             projectTitle={data.data.project.title}
             fn={() => {
-              navigation.navigate("BluecardDetail", { ...item });
+              navigation.navigate("BluecardDetail", { data: { ...item } });
             }}
             projectFn={() => {
               navigation.navigate("ProjectDetail", { ...item.project });

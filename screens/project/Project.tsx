@@ -9,6 +9,7 @@ import Banner from "../../components/Banner";
 import { useState } from "react";
 import Title from "../../components/Title";
 import { useUser } from "../../libs/context";
+import Spinner from "../../components/Spinner";
 
 const Wrapper = styled.View`
   align-items: center;
@@ -51,7 +52,9 @@ const ProjectScreeen = () => {
     setRefreshing(false);
   };
 
-  return data ? (
+  return isLoading ? (
+    <Spinner />
+  ) : (
     <FlatList
       onRefresh={onRefresh}
       refreshing={refreshing}
@@ -64,7 +67,7 @@ const ProjectScreeen = () => {
         </Wrapper>
       }
       contentContainerStyle={{ paddingBottom: 30 }}
-      data={["isFirst", ...data.data.projects]}
+      data={["isFirst", ...data!.data.projects]}
       renderItem={({ item, index }) =>
         index === 0 ? (
           <ProjectList>
@@ -81,7 +84,7 @@ const ProjectScreeen = () => {
         )
       }
     />
-  ) : null;
+  );
 };
 
 export default ProjectScreeen;

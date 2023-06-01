@@ -6,9 +6,12 @@ import { Circle, Path, Svg } from "react-native-svg";
 import Logo from "./Logo";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useUser } from "../libs/context";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Dimension from "../libs/useDimension";
 import onNext from "../libs/nextRef";
+import { useQuery } from "react-query";
+import { Notification } from "../libs/schema";
+import { notifications } from "../libs/api";
 
 const Wrapper = styled.View`
   position: relative;
@@ -70,6 +73,12 @@ interface Props {
   setNotice: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface Response {
+  data: {
+    notifications: Notification[];
+  };
+}
+
 const Header = ({
   navigation,
   detail,
@@ -77,10 +86,28 @@ const Header = ({
   notice,
   setNotice,
 }: Props) => {
-  const { user, setUser } = useUser();
+  const { user } = useUser();
+  const { data, isLoading, refetch } = useQuery<Response>(
+    ["notifications", "notices"],
+    notifications
+  );
   const [search, setSearch] = useState(false);
   const [query, setQuery] = useState("");
+  const [isNew, setIsNew] = useState(false);
   const searchRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    if (data?.data.notifications && user) {
+      if (
+        data?.data.notifications
+          .filter((notice) => user?.subscribe.includes(notice.projectKey))
+          .filter((notice) => !user?.readBlueCard.includes(notice.blueCardId))
+          .length > 0
+      ) {
+        setIsNew(true);
+      } else setIsNew(false);
+    }
+  }, [data, user]);
 
   return (
     <Wrapper>
@@ -177,13 +204,15 @@ const Header = ({
                     d="M12.0195 22.8086C11.0295 22.8086 10.0695 22.4086 9.36953 21.7086C8.66953 21.0086 8.26953 20.0486 8.26953 19.0586H9.76953C9.76953 19.6486 10.0095 20.2286 10.4295 20.6486C10.8495 21.0686 11.4295 21.3086 12.0195 21.3086C13.2595 21.3086 14.2695 20.2986 14.2695 19.0586H15.7695C15.7695 21.1286 14.0895 22.8086 12.0195 22.8086Z"
                     fill="#0075ff"
                   />
-                  <Circle
-                    cx="18.5"
-                    cy="4.5"
-                    r="4"
-                    fill="#F3802D"
-                    stroke="white"
-                  />
+                  {isNew ? (
+                    <Circle
+                      cx="18.5"
+                      cy="4.5"
+                      r="4"
+                      fill="#F3802D"
+                      stroke="white"
+                    />
+                  ) : null}
                 </Svg>
               </TouchableWithoutFeedback>
             </User>

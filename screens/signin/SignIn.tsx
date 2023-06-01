@@ -199,12 +199,14 @@ interface LoginForm {
   password: string;
 }
 
-interface LoginResponse extends User {
-  error?: string;
+interface LoginResponse {
+  user: User;
+  token: string;
 }
 
-interface SocialLoginResponse extends SocialUser {
-  error?: string;
+interface SocialLoginResponse {
+  user: SocialUser;
+  token: string;
 }
 
 type SignInScreenProps = NativeStackScreenProps<RootNavParamList, "SignIn">;
@@ -212,11 +214,13 @@ type SignInScreenProps = NativeStackScreenProps<RootNavParamList, "SignIn">;
 const SignIn = ({ navigation }: SignInScreenProps) => {
   const { user, setUser } = useUser();
   const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId:
+      "136242208106-3nsqr0dhco6uu97chrr4d96ebnb8gb39.apps.googleusercontent.com",
     expoClientId:
       "136242208106-khf9h80bovft9njgurt3p8l2v7js6ive.apps.googleusercontent.com",
   });
   const [login, { loading, data, error, status }] = useMutation<LoginResponse>(
-    "https://www.bluetags.app/api/users/sign-in"
+    "https://www.bluetags.app/api/users/sign-in/mobile"
   );
   const [
     socialLogin,
@@ -227,7 +231,7 @@ const SignIn = ({ navigation }: SignInScreenProps) => {
       status: socialStatus,
     },
   ] = useMutation<SocialLoginResponse>(
-    "https://www.bluetags.app/api/users/sign-in/social/google"
+    "https://www.bluetags.app/api/users/sign-in/social/mobile"
   );
   const [socialObj, setSocailObj] = useState<any>(null);
   const {
@@ -269,7 +273,12 @@ const SignIn = ({ navigation }: SignInScreenProps) => {
 
   useEffect(() => {
     if (socialObj && !socialLoading) {
-      socialLogin(socialObj);
+      const body = {
+        email: socialObj.email,
+        name: socialObj.name,
+        image: socialObj.picture,
+      };
+      socialLogin(body);
     }
   }, [socialObj]);
 
@@ -285,17 +294,17 @@ const SignIn = ({ navigation }: SignInScreenProps) => {
   }, [register]);
 
   useEffect(() => {
-    const storeUser = async (value: User) => {
+    const storeToken = async (value: string) => {
       try {
-        await AsyncStorage.setItem("user", JSON.stringify(value));
+        await AsyncStorage.setItem("token", value);
       } catch (e) {}
     };
     if (data) {
-      if (!data?.auth) {
+      if (!data?.user.auth) {
         console.log("Auth");
       } else if (status === 200) {
-        storeUser(data);
-        setUser(data);
+        storeToken(data.token);
+        setUser(data.user);
         navigation.navigate("Tabs", {
           screen: "Home",
           params: { screen: "Main" },
@@ -305,14 +314,14 @@ const SignIn = ({ navigation }: SignInScreenProps) => {
   }, [data, status]);
 
   useEffect(() => {
-    const storeUser = async (value: SocialUser) => {
+    const storeToken = async (value: string) => {
       try {
-        await AsyncStorage.setItem("user", JSON.stringify(value));
+        await AsyncStorage.setItem("token", value);
       } catch (e) {}
     };
     if (socialStatus === 200 && socialData) {
-      storeUser(socialData);
-      setUser(socialData);
+      storeToken(socialData.token);
+      setUser(socialData.user);
       navigation.navigate("Tabs", {
         screen: "Home",
         params: { screen: "Main" },

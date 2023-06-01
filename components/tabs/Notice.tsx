@@ -1,25 +1,29 @@
 import styled from "styled-components/native";
-import Dimension from "../libs/useDimension";
+import Dimension from "../../libs/useDimension";
 import Constants from "expo-constants";
-import { Animated, FlatList, TouchableWithoutFeedback } from "react-native";
+import {
+  Animated,
+  Easing,
+  FlatList,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+} from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { useUser } from "../libs/context";
-import { useEffect, useState } from "react";
+import { useUser } from "../../libs/context";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { notifications } from "../libs/api";
-import { Notification } from "../libs/schema";
+import { notifications } from "../../libs/api";
+import { Notification } from "../../libs/schema";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { HomeStackNavParamList } from "../../navigation/Root";
 
 const UserTextDetail = styled.View`
   position: absolute;
   top: ${Constants.statusBarHeight}px;
-  right: 0;
   width: ${Dimension.width}px;
   height: ${Dimension.height}px;
   padding-top: 20px;
   overflow: hidden;
-  border-radius: 10px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
   background-color: #ffffff;
   z-index: 60;
 `;
@@ -48,15 +52,15 @@ const Title = styled.Text`
 `;
 
 const SelectWrapper = styled.View`
+  position: relative;
   flex-direction: row;
   align-items: center;
   width: 100%;
+  height: 80px;
   padding: 15px 10px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 `;
 
 const Select = styled.View<{ isIndex: boolean }>`
-  position: relative;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -73,9 +77,9 @@ const SelectText = styled.Text<{ isIndex: boolean }>`
 
 const SelectUnderBar = styled.View`
   position: absolute;
-  top: 45px;
-  width: 100%;
+  width: 150%;
   height: 2px;
+  bottom: -15px;
   border-radius: 1px;
   background-color: #0075ff;
 `;
@@ -87,10 +91,6 @@ const NotificationWrapper = styled.View`
   min-height: 60px;
   height: auto;
   padding: 20px 0px 20px 10px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.07);
-  :hover {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
 `;
 
 const NotificationLogo = styled.View`
@@ -98,12 +98,12 @@ const NotificationLogo = styled.View`
   width: 40px;
   height: 40px;
   border-radius: 20px;
-  overflow: hidden;
 `;
 
 const NotificationLogoImage = styled.Image`
   width: 100%;
   height: 100%;
+  border-radius: 20px;
 `;
 
 const NotificationNew = styled.View`
@@ -130,16 +130,16 @@ const NotificationTitleWrapper = styled.View`
 `;
 
 const NotificationTitle = styled.View`
-  flex-direction: row;
   width: 95%;
   height: auto;
   padding-left: 10px;
-  /* display: -webkit-box;
-  word-wrap: break-word;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  text-overflow: ellipsis;
-  overflow: hidden; */
+`;
+
+const NotificationProjectTitleWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: auto;
 `;
 
 const NotificationProjectTitle = styled.Text`
@@ -147,6 +147,7 @@ const NotificationProjectTitle = styled.Text`
   color: black;
   line-height: 18px;
   font-size: 14px;
+  margin-right: 5px;
 `;
 
 const NotificationTitleText = styled.Text`
@@ -200,6 +201,7 @@ interface Response {
 
 export default function Notice({ notice, setNotice }: Props) {
   const { user } = useUser();
+  const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
   const { data, isLoading, refetch } = useQuery<Response>(
     ["notifications", "notices"],
     notifications
@@ -207,6 +209,30 @@ export default function Notice({ notice, setNotice }: Props) {
   const [index, setIndex] = useState(0);
   const [notices, setNotices] = useState<Notification[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+
+  const X = useRef(new Animated.Value(Dimension.width)).current;
+
+  const opacity = X.interpolate({
+    inputRange: [0, Dimension.width],
+    outputRange: [1, 0],
+  });
+
+  const moveLeft = () => {
+    Animated.timing(X, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+  };
+  const moveRight = () => {
+    Animated.timing(X, {
+      toValue: Dimension.width,
+      duration: 300,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+  };
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -241,8 +267,12 @@ export default function Notice({ notice, setNotice }: Props) {
     }
   }, [index, data]);
 
+  useEffect(() => {
+    moveLeft();
+  }, []);
+
   return (
-    <AnimatedUserTextDetail>
+    <AnimatedUserTextDetail style={{ transform: [{ translateX: X }], opacity }}>
       <FlatList
         onRefresh={onRefresh}
         refreshing={refreshing}
@@ -252,6 +282,7 @@ export default function Notice({ notice, setNotice }: Props) {
               <Title>Notification</Title>
               <TouchableWithoutFeedback
                 onPress={() => {
+                  moveRight();
                   setTimeout(() => setNotice((prev) => !prev), 300);
                 }}
               >
@@ -265,7 +296,12 @@ export default function Notice({ notice, setNotice }: Props) {
                 </Svg>
               </TouchableWithoutFeedback>
             </Exit>
-            <SelectWrapper>
+            <SelectWrapper
+              style={{
+                borderBottomWidth: 2,
+                borderBottomColor: "rgba(0, 0, 0, 0.1)",
+              }}
+            >
               <TouchableWithoutFeedback onPress={() => setIndex(0)}>
                 <Select isIndex={index === 0}>
                   <SelectText isIndex={index === 0}>Subscribed</SelectText>
@@ -289,103 +325,117 @@ export default function Notice({ notice, setNotice }: Props) {
         }
         data={notices}
         renderItem={({ item }) => (
-          <NotificationWrapper>
-            <NotificationLogo>
-              <NotificationLogoImage source={{ uri: item.projectLogo! }} />
-              {user?.readBlueCard.includes(item.blueCardId) ? null : (
-                <NotificationNew />
-              )}
-            </NotificationLogo>
-            <NotificationTextWrapper>
-              <NotificationTitleWrapper>
-                <NotificationTitle>
-                  <>
-                    {item.role === "CREATE" ? (
-                      <>
-                        <NotificationProjectTitle>
-                          {item.projectTitle}
-                        </NotificationProjectTitle>
-                        <NotificationTitleText>
-                          에서 게시글을 업로드했습니다.
-                        </NotificationTitleText>
-                      </>
-                    ) : item.role === "DAY" ? (
-                      <>
-                        <NotificationProjectTitle>
-                          {item.projectTitle}
-                        </NotificationProjectTitle>
-                        <NotificationTitleText>
-                          에서 이벤트 하루 전 입니다.
-                        </NotificationTitleText>
-                      </>
-                    ) : item.role === "HOUR" ? (
-                      <>
-                        <NotificationProjectTitle>
-                          {item.projectTitle}
-                        </NotificationProjectTitle>
-                        <NotificationTitleText>
-                          에서 이벤트 한 시간 전 입니다.
-                        </NotificationTitleText>
-                      </>
-                    ) : item.role === "UPDATE" ? (
-                      <>
-                        <NotificationProjectTitle>
-                          {item.projectTitle}
-                        </NotificationProjectTitle>
-                        <NotificationTitleText>
-                          에서 게시글을 업데이트했습니다.
-                        </NotificationTitleText>
-                      </>
-                    ) : null}
-                    {/* <span>{`${item.title}`}</span> */}
-                  </>
-                  <NotificationDate>
-                    <NotificationDateText>
-                      {(new Date().getTime() -
-                        new Date(item.createdAt).getTime()) /
-                        (1000 * 60 * 60 * 24) <
-                      1
-                        ? Math.floor(
-                            (new Date().getTime() -
-                              new Date(item.createdAt).getTime()) /
-                              (1000 * 60 * 60)
-                          ) <= 1
+          <TouchableHighlight
+            underlayColor={"rgba(0, 0, 0, 0.2)"}
+            onPress={() => {
+              navigation.navigate("BluecardDetail", {
+                bluecardId: item.blueCardId,
+              });
+              setNotice(false);
+            }}
+          >
+            <NotificationWrapper
+              style={{
+                borderBottomWidth: 2,
+                borderBottomColor: "rgba(0, 0, 0, 0.07)",
+              }}
+            >
+              <NotificationLogo>
+                <NotificationLogoImage source={{ uri: item.projectLogo! }} />
+                {user?.readBlueCard.includes(item.blueCardId) ? null : (
+                  <NotificationNew />
+                )}
+              </NotificationLogo>
+              <NotificationTextWrapper>
+                <NotificationTitleWrapper>
+                  <NotificationTitle>
+                    <>
+                      {item.role === "CREATE" ? (
+                        <NotificationProjectTitleWrapper>
+                          <NotificationProjectTitle>
+                            {item.projectTitle}
+                          </NotificationProjectTitle>
+                          <NotificationTitleText>
+                            에서 게시글을 업로드했습니다.
+                          </NotificationTitleText>
+                        </NotificationProjectTitleWrapper>
+                      ) : item.role === "DAY" ? (
+                        <NotificationProjectTitleWrapper>
+                          <NotificationProjectTitle>
+                            {item.projectTitle}
+                          </NotificationProjectTitle>
+                          <NotificationTitleText>
+                            에서 이벤트 하루 전 입니다.
+                          </NotificationTitleText>
+                        </NotificationProjectTitleWrapper>
+                      ) : item.role === "HOUR" ? (
+                        <NotificationProjectTitleWrapper>
+                          <NotificationProjectTitle>
+                            {item.projectTitle}
+                          </NotificationProjectTitle>
+                          <NotificationTitleText>
+                            에서 이벤트 한 시간 전 입니다.
+                          </NotificationTitleText>
+                        </NotificationProjectTitleWrapper>
+                      ) : item.role === "UPDATE" ? (
+                        <NotificationProjectTitleWrapper>
+                          <NotificationProjectTitle>
+                            {item.projectTitle}
+                          </NotificationProjectTitle>
+                          <NotificationTitleText>
+                            에서 게시글을 업데이트했습니다.
+                          </NotificationTitleText>
+                        </NotificationProjectTitleWrapper>
+                      ) : null}
+                    </>
+                    <NotificationDate>
+                      <NotificationDateText>
+                        {(new Date().getTime() -
+                          new Date(item.createdAt).getTime()) /
+                          (1000 * 60 * 60 * 24) <
+                        1
+                          ? Math.floor(
+                              (new Date().getTime() -
+                                new Date(item.createdAt).getTime()) /
+                                (1000 * 60 * 60)
+                            ) <= 1
+                            ? `${Math.floor(
+                                (new Date().getTime() -
+                                  new Date(item.createdAt).getTime()) /
+                                  (1000 * 60 * 60)
+                              )} hour ago`
+                            : `${Math.floor(
+                                (new Date().getTime() -
+                                  new Date(item.createdAt).getTime()) /
+                                  (1000 * 60 * 60)
+                              )} hours ago`
+                          : Math.floor(
+                              (new Date().getTime() -
+                                new Date(item.createdAt).getTime()) /
+                                (1000 * 60 * 60 * 24)
+                            ) === 1
                           ? `${Math.floor(
                               (new Date().getTime() -
                                 new Date(item.createdAt).getTime()) /
-                                (1000 * 60 * 60)
-                            )} hour ago`
+                                (1000 * 60 * 60 * 24)
+                            )} day ago`
                           : `${Math.floor(
                               (new Date().getTime() -
                                 new Date(item.createdAt).getTime()) /
-                                (1000 * 60 * 60)
-                            )} hours ago`
-                        : Math.floor(
-                            (new Date().getTime() -
-                              new Date(item.createdAt).getTime()) /
-                              (1000 * 60 * 60 * 24)
-                          ) === 1
-                        ? `${Math.floor(
-                            (new Date().getTime() -
-                              new Date(item.createdAt).getTime()) /
-                              (1000 * 60 * 60 * 24)
-                          )} day ago`
-                        : `${Math.floor(
-                            (new Date().getTime() -
-                              new Date(item.createdAt).getTime()) /
-                              (1000 * 60 * 60 * 24)
-                          )} days ago`}
-                    </NotificationDateText>
-                  </NotificationDate>
-                  <NotificationPostTitle>
-                    <NotificationPostTitleText>
-                      {item.title}
-                    </NotificationPostTitleText>
-                  </NotificationPostTitle>
-                </NotificationTitle>
-              </NotificationTitleWrapper>
-            </NotificationTextWrapper>
-          </NotificationWrapper>
+                                (1000 * 60 * 60 * 24)
+                            )} days ago`}
+                      </NotificationDateText>
+                    </NotificationDate>
+                    <NotificationPostTitle>
+                      <NotificationPostTitleText>
+                        {item.title}
+                      </NotificationPostTitleText>
+                    </NotificationPostTitle>
+                  </NotificationTitle>
+                </NotificationTitleWrapper>
+              </NotificationTextWrapper>
+            </NotificationWrapper>
+          </TouchableHighlight>
         )}
       />
     </AnimatedUserTextDetail>

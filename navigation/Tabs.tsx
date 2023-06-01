@@ -8,20 +8,26 @@ import Constants from "expo-constants";
 import HomeStack from "./HomeStack";
 import WatcListStack from "./WatchlistStack";
 import ProjectStack from "./ProjectStack";
-import Detail from "../components/Detail";
+import Detail from "../components/tabs/Detail";
 import NewsStack from "./NewsStack";
 import CalendarStack from "./CalendarStack";
-import Notice from "../components/Notice";
+import Notice from "../components/tabs/Notice";
+import NoticeDetail from "../components/tabs/NoticeDetail";
+import { BluecardWithProject } from "../libs/schema";
 
 const Tab = createBottomTabNavigator<TabNavParamList>();
 
 const Tabs = () => {
   const [detail, setDetail] = useState(false);
-  const [notice, setNotice] = useState(true);
+  const [notice, setNotice] = useState(false);
+  const [calendarDetail, setCalendarDetail] = useState("");
+  const [toDos, setToDos] = useState<BluecardWithProject[]>([]);
+  const [todayDate, setTodayDate] = useState(new Date());
   const isDark = useColorScheme() === "dark";
   return (
     <>
       <Tab.Navigator
+        initialRouteName="Calendar"
         sceneContainerStyle={{
           backgroundColor: "#ffffff",
           paddingTop: Constants.statusBarHeight,
@@ -95,7 +101,6 @@ const Tabs = () => {
         />
         <Tab.Screen
           name="Calendar"
-          component={CalendarStack}
           options={{
             tabBarIcon: ({ color, size }) => (
               <Svg viewBox="0 0 448 512">
@@ -106,7 +111,15 @@ const Tabs = () => {
               </Svg>
             ),
           }}
-        />
+        >
+          {() => (
+            <CalendarStack
+              setToDos={setToDos}
+              setTodayDate={setTodayDate}
+              setCalendarDetail={setCalendarDetail}
+            />
+          )}
+        </Tab.Screen>
         <Tab.Screen
           name="Project"
           component={ProjectStack}
@@ -120,8 +133,15 @@ const Tabs = () => {
           }}
         />
       </Tab.Navigator>
-      {detail ? <Detail detail={detail} setDetail={setDetail} /> : null}
       {notice ? <Notice notice={notice} setNotice={setNotice} /> : null}
+      {detail ? <Detail detail={detail} setDetail={setDetail} /> : null}
+      {calendarDetail !== "" ? (
+        <NoticeDetail
+          todayDate={todayDate}
+          toDos={toDos}
+          setCalendarDetail={setCalendarDetail}
+        />
+      ) : null}
     </>
   );
 };

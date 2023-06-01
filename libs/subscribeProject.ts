@@ -12,7 +12,7 @@ interface Props {
   setUser: any;
 }
 
-export default function subscribeProject({
+export default async function subscribeProject({
   subscribeList,
   setSubscribeList,
   project,

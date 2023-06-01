@@ -12,6 +12,7 @@ import BlueCardMedium from "../components/bluecard/BlueCardMedium";
 import ProjectItem from "../components/project/ProjectItem";
 import ProjectCard from "../components/project/ProjectCard";
 import { useUser } from "../libs/context";
+import Spinner from "../components/Spinner";
 
 const Container = styled.View`
   align-items: center;
@@ -176,7 +177,7 @@ const Search = ({ route: { params }, navigation }: SearchScreenProps) => {
             <BlueCardMedium
               data={item}
               fn={() => {
-                navigation.navigate("BluecardDetail", { ...item });
+                navigation.navigate("BluecardDetail", { data: { ...item } });
               }}
               projectFn={() => {
                 navigation.navigate("ProjectDetail", { ...item.project });
@@ -207,7 +208,9 @@ const Search = ({ route: { params }, navigation }: SearchScreenProps) => {
         </TouchableWithoutFeedback>
       </NoResult>
     )
-  ) : null;
+  ) : (
+    <Spinner />
+  );
 };
 
 export default Search;

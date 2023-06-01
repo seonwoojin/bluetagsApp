@@ -4,10 +4,21 @@ import { useColorScheme } from "react-native";
 import { CalendarStackNavParamList } from "./Root";
 import UserDetail from "../screens/user/UserDetail";
 import Calendar from "../screens/calendar/Calendar";
+import { BluecardWithProject } from "../libs/schema";
 
 const NativeStack = createNativeStackNavigator<CalendarStackNavParamList>();
 
-const CalendarStack = () => {
+interface Props {
+  setCalendarDetail: React.Dispatch<React.SetStateAction<string>>;
+  setToDos: React.Dispatch<React.SetStateAction<BluecardWithProject[]>>;
+  setTodayDate: React.Dispatch<React.SetStateAction<Date>>;
+}
+
+const CalendarStack = ({
+  setCalendarDetail,
+  setToDos,
+  setTodayDate,
+}: Props) => {
   const isDark = useColorScheme() === "dark";
   return (
     <NativeStack.Navigator
@@ -19,7 +30,15 @@ const CalendarStack = () => {
         },
       }}
     >
-      <NativeStack.Screen name="Main" component={Calendar} />
+      <NativeStack.Screen name="Main">
+        {() => (
+          <Calendar
+            setToDos={setToDos}
+            setTodayDate={setTodayDate}
+            setCalendarDetail={setCalendarDetail}
+          />
+        )}
+      </NativeStack.Screen>
     </NativeStack.Navigator>
   );
 };

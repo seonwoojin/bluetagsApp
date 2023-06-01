@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import Dimension from "../libs/useDimension";
+import Dimension from "../../libs/useDimension";
 import Constants from "expo-constants";
 import {
   TouchableWithoutFeedback,
@@ -8,11 +8,11 @@ import {
   TouchableHighlight,
 } from "react-native";
 import { Path, Rect, Svg } from "react-native-svg";
-import { useUser } from "../libs/context";
+import { useUser } from "../../libs/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { HomeStackNavParamList } from "../navigation/Root";
+import { HomeStackNavParamList } from "../../navigation/Root";
 
 const Overlay = styled.View`
   position: absolute;
@@ -96,7 +96,7 @@ interface Props {
 }
 
 export default function Detail({ detail, setDetail }: Props) {
-  const { user, setUser } = useUser();
+  const { user, setUser, setToken } = useUser();
   const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
   const X = new Animated.Value(Dimension.width * 0.8);
 
@@ -125,6 +125,7 @@ export default function Detail({ detail, setDetail }: Props) {
   useEffect(() => {
     moveLeft();
   }, []);
+
   return (
     <>
       <TouchableWithoutFeedback
@@ -217,7 +218,8 @@ export default function Detail({ detail, setDetail }: Props) {
           onPress={async () => {
             setDetail(false);
             setUser(null);
-            await AsyncStorage.setItem("user", JSON.stringify(null));
+            setToken(null);
+            await AsyncStorage.removeItem("token");
           }}
         >
           <UserDetail>

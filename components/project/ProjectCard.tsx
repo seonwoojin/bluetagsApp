@@ -3,12 +3,17 @@ import { Project, SocialUser, User } from "../../libs/schema";
 import Dimension from "../../libs/useDimension";
 import { Line, Path, Svg } from "react-native-svg";
 import { Shadow } from "react-native-shadow-2";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { HomeStackNavParamList } from "../../navigation/Root";
+import {
+  CompositeNavigationProp,
+  useNavigation,
+} from "@react-navigation/native";
+import { RootNavParamList, TabNavParamList } from "../../navigation/Root";
 import { TouchableWithoutFeedback } from "react-native";
 import subscribeProject from "../../libs/subscribeProject";
 import { useState } from "react";
 import useMutation from "../../libs/useMutation";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const Wrapper = styled.View``;
 
@@ -122,14 +127,22 @@ interface Props {
   setUser: any;
 }
 
+type NavigationProps = CompositeNavigationProp<
+  BottomTabNavigationProp<TabNavParamList, "Home">,
+  NativeStackNavigationProp<RootNavParamList>
+>;
+
 export default function ProjectCard({ data, user, setUser }: Props) {
-  const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
+  const navigation = useNavigation<NavigationProps>();
   const [subscribe, setSubscribe] = useState<string[]>(
     user ? user.subscribe : []
   );
   const mutation = useMutation("https://www.bluetags.app/api/users/subscribe");
   const onPress = () => {
-    navigation.navigate("ProjectDetail", { ...data });
+    navigation.navigate("Home", {
+      screen: "ProjectDetail",
+      params: { ...data },
+    });
   };
   return (
     <Shadow
@@ -182,14 +195,18 @@ export default function ProjectCard({ data, user, setUser }: Props) {
           </ProjectContent>
           <TouchableWithoutFeedback
             onPress={() => {
-              subscribeProject({
-                subscribeList: subscribe,
-                setSubscribeList: setSubscribe,
-                project: data,
-                user,
-                setUser,
-                mutation,
-              });
+              if (!user) {
+                navigation.navigate("SignIn");
+              } else {
+                subscribeProject({
+                  subscribeList: subscribe,
+                  setSubscribeList: setSubscribe,
+                  project: data,
+                  user,
+                  setUser,
+                  mutation,
+                });
+              }
             }}
           >
             <Button>

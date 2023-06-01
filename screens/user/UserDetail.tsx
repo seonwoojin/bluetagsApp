@@ -12,6 +12,7 @@ import BlueCardHistory from "../../components/bluecard/BlueCardHistory";
 import Dimension from "../../libs/useDimension";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { HomeStackNavParamList } from "../../navigation/Root";
+import Spinner from "../../components/Spinner";
 
 const Container = styled.View`
   align-items: center;
@@ -120,7 +121,9 @@ const UserDetail: React.FC<UserDetailScreenProps> = ({ navigation }) => {
     setRefreshing(false);
   };
 
-  return data ? (
+  return isLoading ? (
+    <Spinner />
+  ) : data ? (
     <FlatList
       contentContainerStyle={{ paddingBottom: 30 }}
       onRefresh={onRefresh}
@@ -180,7 +183,7 @@ const UserDetail: React.FC<UserDetailScreenProps> = ({ navigation }) => {
             projectLogo={item.project.logoUrl}
             projectTitle={item.project.title}
             fn={() => {
-              navigation.navigate("BluecardDetail", { ...item });
+              navigation.navigate("BluecardDetail", { data: { ...item } });
             }}
             projectFn={() => {
               navigation.navigate("ProjectDetail", { ...item.project });

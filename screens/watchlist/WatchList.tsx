@@ -8,6 +8,7 @@ import Banner from "../../components/Banner";
 import BlueCardMedium from "../../components/bluecard/BlueCardMedium";
 import { WatchListStackNavParamList } from "../../navigation/Root";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import Spinner from "../../components/Spinner";
 
 const Wrapper = styled.View`
   align-items: center;
@@ -66,7 +67,9 @@ const WatchList: React.FC<
     setRefreshing(false);
   };
 
-  return data ? (
+  return isLoading ? (
+    <Spinner />
+  ) : (
     <FlatList
       onRefresh={onRefresh}
       refreshing={refreshing}
@@ -80,12 +83,12 @@ const WatchList: React.FC<
       }
       contentContainerStyle={{ paddingBottom: 30 }}
       onEndReachedThreshold={0.75}
-      data={data.pages.map((page) => page.data.bluecards).flat()}
+      data={data!.pages.map((page) => page.data.bluecards).flat()}
       renderItem={({ item }) => (
         <BluecardContainer>
           <BlueCardMedium
             fn={() => {
-              navigation.navigate("BluecardDetail", { ...item });
+              navigation.navigate("BluecardDetail", { data: { ...item } });
             }}
             projectFn={() => {
               navigation.navigate("ProjectDetail", { ...item.project });
@@ -96,7 +99,7 @@ const WatchList: React.FC<
       )}
       ItemSeparatorComponent={HSeparator}
     />
-  ) : null;
+  );
 };
 
 export default WatchList;
