@@ -1,66 +1,46 @@
 import styled from "styled-components/native";
-import { BluecardWithProject, User } from "../../libs/schema";
-import { Shadow } from "react-native-shadow-2";
-import { TouchableWithoutFeedback } from "react-native";
-import { Path, Svg } from "react-native-svg";
-import BlueTag from "../Bluetag";
-import useMutation from "../../libs/useMutation";
+import { BluecardWithProject } from "../../libs/schema";
 import { useEffect, useState } from "react";
+import { useUser } from "../../libs/context";
+import useMutation from "../../libs/useMutation";
 import moment from "moment";
 import useInterval from "../../libs/useInterval";
+import { Shadow } from "react-native-shadow-2";
+import { TouchableWithoutFeedback } from "react-native";
+import BlueTag from "../Bluetag";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootNavParamList } from "../../navigation/Root";
-import axios from "axios";
-import { useUser } from "../../libs/context";
+import { Path, Svg } from "react-native-svg";
+import Dimension from "../../libs/useDimension";
 
-const BlueCardContainer = styled.View`
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 335px;
-  height: 315px;
-  padding: 6px;
-  border-radius: 15px;
-  overflow: hidden;
-  background: #ffffff;
-`;
-
-const BlueCardBackGround = styled.View`
-  position: relative;
-  display: flex;
+const BluecardContainer = styled.View`
   flex-direction: row;
-  width: 98%;
-  height: 140px;
-  margin-bottom: 20px;
-  overflow: hidden;
-  border-radius: 12px;
+  justify-content: flex-start;
+  align-items: center;
+  width: ${Dimension.width * 0.95}px;
+  max-width: 600px;
+  height: 168px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: #ffffff;
 `;
 
-const BlueCardBackGroundImage = styled.Image`
+const Logo = styled.View`
+  position: relative;
+  height: 100%;
+  width: 30%;
+  min-width: 190px;
+  border-radius: 15px;
+`;
+
+const LogoImage = styled.Image`
   position: absolute;
   width: 100%;
   height: 100%;
-`;
-
-const TitleContainer = styled.View`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 100%;
-  height: auto;
-  margin-bottom: 10px;
-  padding: 0px 8px;
-`;
-
-const Title = styled.Text`
-  font-weight: 600;
-  font-size: 16px;
-  color: #010101;
-  overflow: hidden;
+  border-radius: 15px;
 `;
 
 const InfoWrapper = styled.View`
-  display: flex;
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
@@ -68,20 +48,13 @@ const InfoWrapper = styled.View`
   padding: 8px;
 `;
 
-const ProjectLogo = styled.View`
+const ProjectLogo = styled.Image`
   width: 30px;
   height: 30px;
   border-radius: 12px;
-  overflow: hidden;
-`;
-
-const ProjectLogoImage = styled.Image`
-  width: 100%;
-  height: 100%;
 `;
 
 const InfoContainer = styled.View`
-  display: flex;
   flex-direction: row;
   justify-content: center;
   width: auto;
@@ -90,7 +63,7 @@ const InfoContainer = styled.View`
 `;
 
 const PostDate = styled.View`
-  display: flex;
+  flex-direction: row;
   justify-content: flex-end;
   align-items: center;
   width: auto;
@@ -108,7 +81,7 @@ const PostDateText = styled.Text`
 `;
 
 const LikeWrapper = styled.View`
-  display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 30px;
@@ -117,32 +90,49 @@ const LikeWrapper = styled.View`
   border-radius: 21px;
 `;
 
-const PostBlueTags = styled.View`
-  display: flex;
+const Context = styled.View`
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding: 5px 10px;
+  flex: 1;
+`;
+
+const Title = styled.View`
   flex-direction: row;
-  flex-wrap: wrap;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
   height: auto;
-  opacity: 1;
-  padding: 0px 8px;
 `;
 
-const PostContext = styled.View`
-  display: flex;
+const TitleText = styled.Text`
+  font-weight: 600;
+  font-size: 18px;
+  color: #010101;
+`;
+
+const Summary = styled.View`
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
   height: auto;
-  max-height: 110px;
-  margin-bottom: 15px;
-  padding: 0px 8px;
-  overflow: hidden;
 `;
 
-const PostContextText = styled.Text`
-  font-style: normal;
+const SummaryText = styled.Text`
   font-weight: 500;
   font-size: 12px;
   color: #93989a;
+`;
+
+const BluetagWrapper = styled.View`
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 20%;
+  overflow: hidden;
 `;
 
 interface Props {
@@ -151,7 +141,7 @@ interface Props {
   projectFn: () => void;
 }
 
-const BlueCardMedium = ({ data, fn, projectFn }: Props) => {
+export default function Bluecard({ data, fn, projectFn }: Props) {
   const { user, setUser } = useUser();
   const [save] = useMutation(
     `https://www.bluetags.app/api/bluecards/user-save`
@@ -223,9 +213,9 @@ const BlueCardMedium = ({ data, fn, projectFn }: Props) => {
       style={{ borderRadius: 15 }}
     >
       <TouchableWithoutFeedback onPress={fn}>
-        <BlueCardContainer>
-          <BlueCardBackGround>
-            <BlueCardBackGroundImage
+        <BluecardContainer>
+          <Logo>
+            <LogoImage
               source={{
                 uri:
                   data.thumbnail === ""
@@ -235,27 +225,17 @@ const BlueCardMedium = ({ data, fn, projectFn }: Props) => {
             />
             <InfoWrapper>
               <TouchableWithoutFeedback onPress={projectFn}>
-                <ProjectLogo>
-                  <ProjectLogoImage source={{ uri: data.project.logoImage }} />
-                </ProjectLogo>
+                <ProjectLogo source={{ uri: data.project.logoImage }} />
               </TouchableWithoutFeedback>
               <InfoContainer>
                 {leftTime ? (
                   // <PostDate>2h 4m 32s</PostDate>
                   <PostDate>
-                    <PostDateText>{`${
-                      Math.floor(leftTime.asHours()) >= 0
-                        ? Math.floor(leftTime.asHours())
-                        : 0
-                    }h ${
-                      Math.floor(leftTime.asMinutes() % 60) >= 0
-                        ? Math.floor(leftTime.asMinutes() % 60)
-                        : 0
-                    }m ${
-                      Math.floor(leftTime.asSeconds() % 60) >= 0
-                        ? Math.floor(leftTime.asSeconds() % 60)
-                        : 0
-                    }s`}</PostDateText>
+                    <PostDateText>
+                      {`${Math.floor(leftTime.asHours())}h ${Math.floor(
+                        leftTime.asMinutes() % 60
+                      )}m ${Math.floor(leftTime.asSeconds() % 60)}s`}
+                    </PostDateText>
                   </PostDate>
                 ) : null}
                 <TouchableWithoutFeedback
@@ -316,31 +296,27 @@ const BlueCardMedium = ({ data, fn, projectFn }: Props) => {
                 </TouchableWithoutFeedback>
               </InfoContainer>
             </InfoWrapper>
-          </BlueCardBackGround>
-          <TitleContainer>
-            <Title numberOfLines={2}>{data.title}</Title>
-          </TitleContainer>
-          <PostContext>
-            <PostContextText numberOfLines={3}>
-              {data.summary.replace(/<[^>]*>?/g, "")}
-            </PostContextText>
-          </PostContext>
-          <PostBlueTags>
-            {data.bluetags.map((tag, index) =>
-              tag !== "Etc" ? (
+          </Logo>
+          <Context>
+            <Title>
+              <TitleText numberOfLines={2}>{data.title}</TitleText>
+            </Title>
+            <Summary>
+              <SummaryText numberOfLines={3}>{data.summary}</SummaryText>
+            </Summary>
+            <BluetagWrapper>
+              {data.bluetags.map((word, index) => (
                 <BlueTag
                   key={index}
                   color="#3733FF"
                   isWhite="false"
-                  text={`${tag}`}
+                  text={`${word}`}
                 />
-              ) : null
-            )}
-          </PostBlueTags>
-        </BlueCardContainer>
+              ))}
+            </BluetagWrapper>
+          </Context>
+        </BluecardContainer>
       </TouchableWithoutFeedback>
     </Shadow>
   );
-};
-
-export default BlueCardMedium;
+}

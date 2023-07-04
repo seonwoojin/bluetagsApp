@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Project, SocialUser, User } from "./schema";
+import { Project, User } from "./schema";
 import { useMutationResult } from "./useMutation";
 import Toast from "react-native-toast-message";
 
@@ -7,7 +7,7 @@ interface Props {
   subscribeList: string[];
   setSubscribeList: Dispatch<SetStateAction<string[]>>;
   project: Project;
-  user: User | SocialUser | null;
+  user: User | null;
   mutation: useMutationResult<any, any>;
   setUser: any;
 }

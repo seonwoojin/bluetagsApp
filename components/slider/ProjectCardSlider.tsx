@@ -2,7 +2,7 @@ import Carousel, { Pagination } from "react-native-snap-carousel";
 import styled from "styled-components/native";
 import Dimension from "../../libs/useDimension";
 import { useRef, useState } from "react";
-import { Project, SocialUser, User } from "../../libs/schema";
+import { Project, User } from "../../libs/schema";
 import ProjectCardList from "../project/ProjectCardList";
 
 const SwiperContainer = styled.View`
@@ -16,7 +16,7 @@ const SwiperContainer = styled.View`
 
 interface Props {
   data: Project[][];
-  user: User | SocialUser | null;
+  user: User | null;
   setUser: any;
 }
 

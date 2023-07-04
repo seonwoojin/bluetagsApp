@@ -9,7 +9,7 @@ import { darkTheme, lightTheme } from "./styled";
 import { StatusBar } from "expo-status-bar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserContext } from "./libs/context";
-import { SocialUser, User } from "./libs/schema";
+import { User } from "./libs/schema";
 import Toast from "react-native-toast-message";
 import ToastSuccess from "./components/ToastSuccess";
 import axios from "axios";
@@ -24,14 +24,14 @@ const toastConfig = {
 };
 
 interface Response {
-  user: User | SocialUser;
+  user: User;
   token?: string;
 }
 
 export default function App() {
   //AsyncStorage.clear();
   const [appIsReady, setAppIsReady] = useState(false);
-  const [user, setUser] = useState<User | SocialUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>();
   const isDark = useColorScheme() === "dark";
 

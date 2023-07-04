@@ -14,15 +14,18 @@ export enum d {
 export type Project = {
   id: string;
   key: string;
-  chain: string;
   title: string;
-  logoUrl: string;
+  logoImage: string;
+  backgroundImage: string;
   description: string | null;
-  backGround: string;
+  category: string;
+  fundingScale: string;
   discordUrl: string | null;
   twitterUrl: string | null;
   openseaUrl: string | null;
   homepageUrl: string | null;
+  mediumUrl: string | null;
+  telegramUrl: string | null;
   subscriber: number;
 };
 
@@ -42,6 +45,7 @@ export type BlueCard = {
   isUpload: boolean;
   view: number;
   like: number;
+  save: number;
   unlike: number;
 };
 
@@ -53,7 +57,7 @@ export type User = {
   id: string;
   email: string;
   name: string;
-  password: string;
+  password: string | null;
   profile: string;
   auth: boolean;
   admin: boolean | null;
@@ -63,27 +67,13 @@ export type User = {
   isSocial: boolean;
   calendar: string[];
   survey: Survey;
-  like_bluecard: string[];
-  unlike_bluecard: string[];
-  like_newscard: string[];
-  unlike_newscard: string[];
-};
-
-export type SocialUser = {
-  id: string;
-  email: string;
-  name: string;
-  profile: string;
-  createdAt: Date | null;
-  readBlueCard: string[];
-  subscribe: string[];
-  isSocial: boolean;
-  calendar: string[];
-  survey: Survey;
-  like_bluecard: string[];
-  unlike_bluecard: string[];
-  like_newscard: string[];
-  unlike_newscard: string[];
+  like_bluecards: string[];
+  unlike_bluecards: string[];
+  like_newscards: string[];
+  unlike_newscards: string[];
+  like_comments: string[];
+  unlike_comments: string[];
+  save_bluecards: string[];
 };
 
 export interface ProjectWithBlueCard extends Project {
@@ -115,3 +105,16 @@ export type Notification = {
   thumbnail: string | null;
   role: "CREATE" | "UPDATE" | "HOUR" | "DAY";
 };
+
+export type Comment = {
+  id: string;
+  createdAt: Date;
+  userId: string;
+  blueCardId: string;
+  text: string;
+  like: number;
+};
+
+export interface CommentWithUser extends Comment {
+  user: User;
+}

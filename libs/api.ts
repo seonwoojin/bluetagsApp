@@ -3,12 +3,16 @@ import { useUser } from "./context";
 
 const axiosInstance = axios.create({
   baseURL: "https://www.bluetags.app",
+  //baseURL: "http://192.168.0.7:3000",
   headers: {
     Authorization: `Bearer`,
   },
 });
 
-export const homeBluecards = () => axiosInstance.get("/api/bluecards");
+export const homeBluecards = () =>
+  axios.get("https://www.bluetags.app/api/bluecards/home");
+
+export const homeInfo = () => axiosInstance.get("/api/info");
 
 export const allProjects = () => axiosInstance.get("/api/projects");
 
@@ -21,8 +25,15 @@ export const projectBluecards = (key: string, lastId: string) =>
 export const allNewscards = (lastId: string) =>
   axiosInstance.get(`/api/newscards?previous=${lastId}`);
 
+export const mostReadNews = () => axiosInstance.get("/api/newscards/trends");
+
 export const watchListBluecards = (lastId: string) =>
   axiosInstance.get(`/api/bluecards?watchlist=true&previous=${lastId}`);
+
+export const watchListBluecardsSubscribe = (lastId: string, userId: string) =>
+  axiosInstance.get(
+    `/api/bluecards?watchlist=true&user=${userId}&previous=${lastId}`
+  );
 
 export const userInfo = (userId: string, lastId: string) =>
   axiosInstance.get(
@@ -39,3 +50,11 @@ export const notifications = () => axiosInstance.get("/api/notifications");
 
 export const bluecardDetail = (id: string) =>
   axiosInstance.get(`/api/bluecards/${id}`);
+
+export const bluecardComments = (id: string) =>
+  axiosInstance.get(`/api/bluecards/comments?id=${id}`);
+
+export const greeting = () => axiosInstance.get("/api/info/bluecard");
+
+export const upcomingBluecards = () =>
+  axiosInstance.get("/api/bluecards/upcoming");

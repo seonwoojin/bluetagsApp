@@ -1,13 +1,55 @@
 import styled from "styled-components/native";
 import Dimension from "../../libs/useDimension";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Path, Svg } from "react-native-svg";
-import { TouchableWithoutFeedback, View } from "react-native";
+import {
+  Animated,
+  RefreshControl,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { Shadow } from "react-native-shadow-2";
 import axios from "axios";
 import { BluecardWithProject, Project } from "../../libs/schema";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { CalendarStackNavParamList } from "../../navigation/Root";
+import { useUser } from "../../libs/context";
+import Greeting from "../../components/Greeting";
+import { useQuery } from "react-query";
+import { upcomingBluecards } from "../../libs/api";
+import Upcoming from "../../components/Upcoming";
+import Spinner from "../../components/Spinner";
+
+const FlatlistContainer = styled.View`
+  position: relative;
+  flex: 1;
+`;
+
+const SelectWrapper = styled.View`
+  position: absolute;
+  right: 3%;
+  bottom: 5%;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  z-index: 70;
+`;
+
+const Select = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 130px;
+  height: 40px;
+  border-radius: 8px;
+  background: white;
+`;
+
+const SelectText = styled.Text`
+  font-weight: 500;
+  font-size: 14px;
+  color: #1c1b1b;
+`;
 
 const Scroll = styled.ScrollView``;
 
@@ -15,7 +57,7 @@ const Wrapper = styled.View`
   justify-content: flex-start;
   align-items: center;
   width: ${Dimension.width}px;
-  height: ${Dimension.height * 2}px;
+  height: auto;
   padding-top: 30px;
 `;
 
@@ -169,9 +211,9 @@ const TodoStartDiv = styled.View<{
   background-color: ${(props) =>
     props.tag === "event"
       ? "#64b5ff"
-      : props.tag === "minting"
+      : props.tag === "partnership"
       ? "#9dce99"
-      : props.tag === "voting"
+      : props.tag === "network"
       ? "#ffa0d3"
       : "#fcc53a"};
 `;
@@ -203,6 +245,86 @@ const BetweenDiv = styled.View`
   margin-bottom: 5px;
   z-index: 20;
 `;
+
+const LegendContainer = styled.View`
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  border-radius: 5px;
+  background-color: #ffffff;
+`;
+
+const LegendContainerH1 = styled.View`
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 65px;
+`;
+
+const LegendContainerH1Text = styled.Text`
+  font-size: 12px;
+  color: #434447;
+`;
+
+const UnitWrapper = styled.View`
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+`;
+
+const UnitContainer = styled.View<{ isSelect: string; color: string }>`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: ${Dimension.width * 0.4}px;
+  height: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 54px;
+  color: #191f28;
+  background-color: #f8f9fa;
+  border: ${(props) =>
+    props.isSelect === "true"
+      ? `2px solid ${props.color}`
+      : "2px solid transparent"};
+`;
+
+const UnitContainerDiv = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+`;
+
+const UnitContainerDivText = styled.Text`
+  font-size: 10px;
+`;
+
+const UnitCount = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  height: 100%;
+`;
+
+const UnitCountText = styled.Text`
+  font-size: 12px;
+`;
+
+const BluecardWrapper = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+`;
+
+const AnimatedSelect = Animated.createAnimatedComponent(Select);
+const AnimatedSelectText = Animated.createAnimatedComponent(SelectText);
 
 const monthArray = [
   "January",
@@ -443,15 +565,116 @@ interface Props {
   setTodayDate: React.Dispatch<React.SetStateAction<Date>>;
 }
 
+interface Response {
+  data: {
+    upComingEvents: BluecardWithProject[];
+  };
+}
+
 const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
+  const { user } = useUser();
   const navigation = useNavigation<NavigationProp<CalendarStackNavParamList>>();
+
+  const { data, isLoading, error, refetch } = useQuery<Response>(
+    "upcoming",
+    upcomingBluecards
+  );
+
+  const hover = useRef(new Animated.Value(0));
   const [date, setDate] = useState(new Date());
   const [weeks, setWeeks] = useState(getRemainWeeks(new Date(), []));
   const [yearArray, setYearArray] = useState<number[]>([]);
   const [calendarDatas, setCalendarDatas] = useState<BluecardWithProject[]>([]);
+  const [event, setEvent] = useState(0);
+  const [network, setNetwork] = useState(0);
+  const [partnership, setPartnership] = useState(0);
+  const [announcement, setAnnouncement] = useState(0);
+  const [filter, setFilter] = useState("");
+  const [change, setChange] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
-    setWeeks(getRemainWeeks(date, calendarDatas));
-  }, [date.getMonth(), calendarDatas]);
+    if (change) {
+      if (filter!) {
+        setWeeks(
+          getRemainWeeks(
+            date,
+            calendarDatas
+              .filter(
+                (data, index) =>
+                  calendarDatas.findIndex((next) => next.id === data.id) ===
+                  index
+              )
+              .filter((bluecard) => bluecard.bluetags.includes(filter))
+          )
+        );
+      } else {
+        setWeeks(
+          getRemainWeeks(
+            date,
+            calendarDatas.filter(
+              (data, index) =>
+                calendarDatas.findIndex((next) => next.id === data.id) === index
+            )
+          )
+        );
+      }
+    } else if (!change && user) {
+      if (filter !== "") {
+        setWeeks(
+          getRemainWeeks(
+            date,
+            calendarDatas
+              .filter(
+                (data, index) =>
+                  calendarDatas.findIndex((next) => next.id === data.id) ===
+                  index
+              )
+              .filter((bluecard) => user.calendar.includes(bluecard.id))
+              .filter((bluecard) => bluecard.bluetags.includes(filter))
+          )
+        );
+      } else {
+        setWeeks(
+          getRemainWeeks(
+            date,
+            calendarDatas
+              .filter(
+                (data, index) =>
+                  calendarDatas.findIndex((next) => next.id === data.id) ===
+                  index
+              )
+              .filter((bluecard) => user.calendar.includes(bluecard.id))
+          )
+        );
+      }
+    } else {
+      if (filter !== "") {
+        setWeeks(
+          getRemainWeeks(
+            date,
+            calendarDatas
+              .filter(
+                (data, index) =>
+                  calendarDatas.findIndex((next) => next.id === data.id) ===
+                  index
+              )
+              .filter((bluecard) => bluecard.bluetags.includes(filter))
+          )
+        );
+      } else {
+        setWeeks(
+          getRemainWeeks(
+            date,
+            calendarDatas.filter(
+              (data, index) =>
+                calendarDatas.findIndex((next) => next.id === data.id) === index
+            )
+          )
+        );
+      }
+    }
+  }, [date.getMonth(), calendarDatas, change, user, filter]);
 
   useEffect(() => {
     if (!yearArray.includes(date.getFullYear())) {
@@ -471,9 +694,187 @@ const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
     setToDos(calendarDatas);
   }, [calendarDatas]);
 
-  return (
-    <Scroll>
-      {weeks.length > 0 ? (
+  useEffect(() => {
+    setEvent(0);
+    setNetwork(0);
+    setPartnership(0);
+    setAnnouncement(0);
+    if (weeks) {
+      const filteredData =
+        !change && user
+          ? calendarDatas
+              .filter(
+                (data, index) =>
+                  calendarDatas.findIndex((next) => next.id === data.id) ===
+                  index
+              )
+              .filter((bluecard) => user.calendar.includes(bluecard.id))
+              .filter(
+                (data) =>
+                  new Date(data.deadLineStart!).getFullYear() ===
+                    date.getFullYear() ||
+                  new Date(data.deadLineEnd!).getFullYear() ===
+                    date.getFullYear()
+              )
+              .filter((data) => {
+                if (
+                  new Date(data.deadLineStart!).getMonth() === date.getMonth()
+                ) {
+                  return true;
+                } else if (
+                  new Date(data.deadLineEnd!).getMonth() === date.getMonth()
+                ) {
+                  return true;
+                } else if (
+                  new Date(data.deadLineStart!) <= date &&
+                  new Date(data.deadLineEnd!) >= date
+                ) {
+                  return true;
+                } else {
+                  return false;
+                }
+              })
+          : calendarDatas
+              .filter(
+                (data, index) =>
+                  calendarDatas.findIndex((next) => next.id === data.id) ===
+                  index
+              )
+              .filter(
+                (data) =>
+                  new Date(data.deadLineStart!).getFullYear() ===
+                    date.getFullYear() ||
+                  new Date(data.deadLineEnd!).getFullYear() ===
+                    date.getFullYear()
+              )
+              .filter((data) => {
+                if (
+                  new Date(data.deadLineStart!).getMonth() === date.getMonth()
+                ) {
+                  return true;
+                } else if (
+                  new Date(data.deadLineEnd!).getMonth() === date.getMonth()
+                ) {
+                  return true;
+                } else if (
+                  new Date(data.deadLineStart!) <= date &&
+                  new Date(data.deadLineEnd!) >= date
+                ) {
+                  return true;
+                } else {
+                  return false;
+                }
+              });
+      filteredData.map((data) => {
+        switch (data.bluetags[0].toLowerCase()) {
+          case "event":
+            setEvent((prev) => prev + 1);
+            break;
+          case "network":
+            setNetwork((prev) => prev + 1);
+            break;
+          case "partnership":
+            setPartnership((prev) => prev + 1);
+            break;
+          case "announcement":
+            setAnnouncement((prev) => prev + 1);
+            break;
+        }
+      });
+    }
+  }, [date, change, calendarDatas, user, weeks]);
+
+  const handlePressIn = () => {
+    Animated.timing(hover.current, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.timing(hover.current, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const translateY = hover.current.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -10],
+  });
+
+  const backgroundColor = hover.current.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#ffffff", "#5671f1"],
+  });
+
+  const color = hover.current.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#1c1b1b", "#ffffff"],
+  });
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setCalendarDatas([]);
+    setYearArray([]);
+    setWeeks([]);
+    await refetch();
+    setRefreshing(false);
+  };
+
+  const loading = isLoading || weeks.length === 0;
+
+  return isLoading ? (
+    <Spinner />
+  ) : (
+    <FlatlistContainer>
+      <SelectWrapper>
+        {user ? (
+          <Animated.View
+            style={{
+              transform: [{ translateY }],
+            }}
+          >
+            <Shadow
+              style={{ marginRight: 20, borderRadius: 8 }}
+              startColor="rgba(60, 64, 67, 0.1)"
+              distance={3}
+              offset={[0, 2]}
+            >
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setChange((prev) => !prev);
+                  setFilter("");
+                }}
+                onPressIn={() => handlePressIn()}
+                onPressOut={handlePressOut}
+              >
+                <AnimatedSelect
+                  style={{
+                    backgroundColor,
+                  }}
+                >
+                  <AnimatedSelectText
+                    style={{
+                      color,
+                    }}
+                  >
+                    {!change ? "Selected" : "All"}
+                  </AnimatedSelectText>
+                </AnimatedSelect>
+              </TouchableWithoutFeedback>
+            </Shadow>
+          </Animated.View>
+        ) : null}
+      </SelectWrapper>
+      <Scroll
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <Greeting isLogin={user ? !change : change} name={user?.name} />
         <Wrapper>
           <NavWrapper>
             <DateWrapper>
@@ -482,6 +883,7 @@ const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
             </DateWrapper>
             <ButtonWrapper>
               <TouchableWithoutFeedback
+                hitSlop={{ top: 30, right: 30, bottom: 30, left: 30 }}
                 onPress={() => {
                   setDate(new Date(date.setMonth(date.getMonth() - 1)));
                 }}
@@ -496,6 +898,7 @@ const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
                 </Svg>
               </TouchableWithoutFeedback>
               <TouchableWithoutFeedback
+                hitSlop={{ top: 30, right: 30, bottom: 30, left: 30 }}
                 onPress={() => {
                   setDate(new Date(date.setMonth(date.getMonth() + 1)));
                 }}
@@ -610,9 +1013,179 @@ const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
               ))}
             </CalendarWrapper>
           </Shadow>
+          <LegendContainer>
+            <Shadow
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 5,
+                width: Dimension.width * 0.9,
+              }}
+              startColor="rgba(0, 0, 0, 0.05)"
+              distance={6}
+            >
+              <LegendContainerH1>
+                <LegendContainerH1Text>Legend</LegendContainerH1Text>
+              </LegendContainerH1>
+              <UnitWrapper>
+                <Shadow
+                  style={{ marginBottom: 20, borderRadius: 54 }}
+                  startColor="rgba(0, 0, 0, 0.04)"
+                  distance={4}
+                >
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      if (filter !== "Event") setFilter("Event");
+                      else setFilter("");
+                    }}
+                  >
+                    <UnitContainer
+                      color="#64B5FF"
+                      isSelect={(filter === "Event").toString()}
+                    >
+                      <UnitContainerDiv>
+                        <Svg
+                          width={12}
+                          height={12}
+                          style={{ marginRight: 15 }}
+                          fill={"#64B5FF"}
+                          viewBox="0 0 512 512"
+                        >
+                          <Path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512z" />
+                        </Svg>
+                        <UnitContainerDivText>Event</UnitContainerDivText>
+                      </UnitContainerDiv>
+                      <UnitContainerDiv>
+                        <UnitCount>
+                          <UnitCountText>{`${event}`}</UnitCountText>
+                        </UnitCount>
+                      </UnitContainerDiv>
+                    </UnitContainer>
+                  </TouchableWithoutFeedback>
+                </Shadow>
+                <Shadow
+                  style={{ marginBottom: 20, borderRadius: 54 }}
+                  startColor="rgba(0, 0, 0, 0.04)"
+                  distance={4}
+                >
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      if (filter !== "Network") setFilter("Network");
+                      else setFilter("");
+                    }}
+                  >
+                    <UnitContainer
+                      color="#ffa0d3"
+                      isSelect={(filter === "Network").toString()}
+                    >
+                      <UnitContainerDiv>
+                        <Svg
+                          width={12}
+                          height={12}
+                          style={{ marginRight: 15 }}
+                          fill={"#ffa0d3"}
+                          viewBox="0 0 512 512"
+                        >
+                          <Path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512z" />
+                        </Svg>
+                        <UnitContainerDivText>Network</UnitContainerDivText>
+                      </UnitContainerDiv>
+                      <UnitContainerDiv>
+                        <UnitCount>
+                          <UnitCountText>{`${network}`}</UnitCountText>
+                        </UnitCount>
+                      </UnitContainerDiv>
+                    </UnitContainer>
+                  </TouchableWithoutFeedback>
+                </Shadow>
+                <Shadow
+                  style={{ marginBottom: 20, borderRadius: 54 }}
+                  startColor="rgba(0, 0, 0, 0.04)"
+                  distance={4}
+                >
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      if (filter !== "Partnership") setFilter("Partnership");
+                      else setFilter("");
+                    }}
+                  >
+                    <UnitContainer
+                      color="#9dce99"
+                      isSelect={(filter === "Partnership").toString()}
+                    >
+                      <UnitContainerDiv>
+                        <Svg
+                          width={12}
+                          height={12}
+                          style={{ marginRight: 15 }}
+                          fill={"#9dce99"}
+                          viewBox="0 0 512 512"
+                        >
+                          <Path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512z" />
+                        </Svg>
+                        <UnitContainerDivText>Partnership</UnitContainerDivText>
+                      </UnitContainerDiv>
+                      <UnitContainerDiv>
+                        <UnitCount>
+                          <UnitCountText>{`${partnership}`}</UnitCountText>
+                        </UnitCount>
+                      </UnitContainerDiv>
+                    </UnitContainer>
+                  </TouchableWithoutFeedback>
+                </Shadow>
+                <Shadow
+                  style={{ marginBottom: 20, borderRadius: 54 }}
+                  startColor="rgba(0, 0, 0, 0.04)"
+                  distance={4}
+                >
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      if (filter !== "Announcement") setFilter("Announcement");
+                      else setFilter("");
+                    }}
+                  >
+                    <UnitContainer
+                      color="#fcc53a"
+                      isSelect={(filter === "Announcement").toString()}
+                    >
+                      <UnitContainerDiv>
+                        <Svg
+                          width={12}
+                          height={12}
+                          style={{ marginRight: 15 }}
+                          fill={"#fcc53a"}
+                          viewBox="0 0 512 512"
+                        >
+                          <Path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512z" />
+                        </Svg>
+                        <UnitContainerDivText>
+                          Announcement
+                        </UnitContainerDivText>
+                      </UnitContainerDiv>
+                      <UnitContainerDiv>
+                        <UnitCount>
+                          <UnitCountText>{`${announcement}`}</UnitCountText>
+                        </UnitCount>
+                      </UnitContainerDiv>
+                    </UnitContainer>
+                  </TouchableWithoutFeedback>
+                </Shadow>
+              </UnitWrapper>
+            </Shadow>
+          </LegendContainer>
+          {data?.data.upComingEvents ? (
+            <BluecardWrapper>
+              <Upcoming
+                navigation={navigation}
+                data={data.data.upComingEvents}
+              />
+            </BluecardWrapper>
+          ) : null}
         </Wrapper>
-      ) : null}
-    </Scroll>
+      </Scroll>
+    </FlatlistContainer>
   );
 };
 

@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
-import { Project, SocialUser, User } from "./schema";
+import { Project, User } from "./schema";
 import { useMutationResult } from "./useMutation";
 import Toast from "react-native-toast-message";
 
 interface Props {
   bluecardId: string;
-  user: User | SocialUser | null;
+  user: User | null;
   mutation: useMutationResult<any, any>;
   setUser: any;
   setCalendar: React.Dispatch<React.SetStateAction<boolean>>;

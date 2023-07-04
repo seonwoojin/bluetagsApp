@@ -16,7 +16,7 @@ export type useMutationResult<T, U> = [
 export default function useMutation<T = any, U = any>(
   url: string
 ): useMutationResult<T, U> {
-  const [state, setSate] = useState<UseMutationState<T, U>>({
+  const [state, setState] = useState<UseMutationState<T, U>>({
     loading: false,
     data: undefined,
     error: undefined,
@@ -27,15 +27,16 @@ export default function useMutation<T = any, U = any>(
       const response = await axios.post<T>(url, body);
       const data = response.data;
       const status = response.status;
-      setSate((prev) => ({ ...prev, data }));
-      setSate((prev) => ({ ...prev, status }));
+      setState((prev) => ({ ...prev, data }));
+      setState((prev) => ({ ...prev, status }));
     } catch (e: any) {
       const error = e.response.data.error;
+      console.log(e.response.data.error);
       const status = e.response.status;
-      setSate((prev) => ({ ...prev, error }));
-      setSate((prev) => ({ ...prev, status }));
+      setState((prev) => ({ ...prev, error }));
+      setState((prev) => ({ ...prev, status }));
     } finally {
-      setSate((prev) => ({ ...prev, loading: false }));
+      setState((prev) => ({ ...prev, loading: false }));
     }
   }
   return [mutation, { ...state }];

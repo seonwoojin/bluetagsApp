@@ -180,7 +180,7 @@ const UserDetail: React.FC<UserDetailScreenProps> = ({ navigation }) => {
         <ItemWrapper>
           <BlueCardHistory
             data={item}
-            projectLogo={item.project.logoUrl}
+            projectLogo={item.project.logoImage}
             projectTitle={item.project.title}
             fn={() => {
               navigation.navigate("BluecardDetail", { data: { ...item } });

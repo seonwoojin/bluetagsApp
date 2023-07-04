@@ -157,7 +157,7 @@ const ProjectDetail: React.FC<ProjectDetailScreenProps> = ({
       ListHeaderComponent={
         <Container>
           <Banner
-            url={data.data.project.backGround}
+            url={data.data.project.backgroundImage}
             text={data.data.project ? `${data.data.project.title}` : "Project"}
           >
             <LogoWrapper>
@@ -217,7 +217,7 @@ const ProjectDetail: React.FC<ProjectDetailScreenProps> = ({
         <ItemWrapper>
           <BlueCardHistory
             data={item}
-            projectLogo={data.data.project.logoUrl}
+            projectLogo={data.data.project.logoImage}
             projectTitle={data.data.project.title}
             fn={() => {
               navigation.navigate("BluecardDetail", { data: { ...item } });

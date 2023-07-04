@@ -7,7 +7,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { ClipPath, Defs, G, Path, Rect, Svg } from "react-native-svg";
 import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
-import { SocialUser, User } from "../../libs/schema";
+import { User } from "../../libs/schema";
 import useMutation from "../../libs/useMutation";
 import { API_KEY } from "react-native-dotenv";
 import { useUser } from "../../libs/context";
@@ -205,7 +205,7 @@ interface LoginResponse {
 }
 
 interface SocialLoginResponse {
-  user: SocialUser;
+  user: User;
   token: string;
 }
 

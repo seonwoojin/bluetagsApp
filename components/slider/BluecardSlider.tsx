@@ -1,8 +1,8 @@
-import Carousel from "react-native-snap-carousel";
+import Carousel, { Pagination } from "react-native-snap-carousel";
 import styled from "styled-components/native";
 import Dimension from "../../libs/useDimension";
 import { useRef, useState } from "react";
-import { BluecardWithProject } from "../../libs/schema";
+import { BluecardWithProject, User } from "../../libs/schema";
 import BlueCardMedium from "../bluecard/BlueCardMedium";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { HomeStackNavParamList } from "../../navigation/Root";
@@ -14,18 +14,6 @@ const SwiperContainer = styled.View`
   align-items: center;
   align-self: center;
   margin-bottom: 15px;
-`;
-
-const IndexWrapper = styled.View`
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: auto;
-`;
-
-const Index = styled.Text`
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.6);
 `;
 
 interface Props {
@@ -55,7 +43,9 @@ const BluecardSlider = ({ data }: Props) => {
           );
         }}
         itemWidth={345}
-        sliderWidth={Math.round(Dimension.width)}
+        containerCustomStyle={{ marginLeft: 10 }}
+        slideStyle={{ marginBottom: 30, marginTop: 10 }}
+        sliderWidth={Math.round(Dimension.height)}
         horizontal
         loop
         loopClonesPerSide={data.length}
@@ -67,9 +57,27 @@ const BluecardSlider = ({ data }: Props) => {
         enableMomentum={true}
         shouldOptimizeUpdates={false}
       />
-      <IndexWrapper>
-        <Index>{`${activeSlide + 1} / ${data.length}`}</Index>
-      </IndexWrapper>
+      <Pagination
+        carouselRef={carousel.current}
+        tappableDots={true}
+        dotsLength={data.length}
+        activeDotIndex={activeSlide}
+        containerStyle={{ paddingVertical: 10 }}
+        dotStyle={{
+          width: 8,
+          height: 8,
+          borderRadius: 4,
+          marginHorizontal: 5,
+          backgroundColor: "rgb(64, 64, 64)",
+        }}
+        inactiveDotStyle={
+          {
+            // Define styles for inactive dots here
+          }
+        }
+        inactiveDotOpacity={0.4}
+        inactiveDotScale={1}
+      />
     </SwiperContainer>
   );
 };

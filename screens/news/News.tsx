@@ -9,42 +9,29 @@ import { Shadow } from "react-native-shadow-2";
 import Newscard from "../../components/newscard/Nescard";
 import { FlatList } from "react-native";
 import Spinner from "../../components/Spinner";
+import MostReadNews from "./../../components/MostReadNews";
 
 const Wrapper = styled.View`
   align-items: center;
   width: 100%;
-  margin-top: 20px;
 `;
 
 const ContextWrapper = styled.View`
-  position: relative;
   justify-content: center;
   align-items: center;
-  gap: 15px;
-  width: ${Dimension.width * 0.9}px;
-  max-width: 1200px;
+  width: 100%;
   height: auto;
-  padding: 25px 30px 0px 30px;
-  overflow: hidden;
-`;
-
-const VerticalBar = styled.View`
-  position: absolute;
-  width: 1px;
-  height: 105%;
-  background-color: rgba(0, 0, 0, 0.1);
-  left: 40px;
-  top: 45px;
-  z-index: -1;
+  background-color: #ffffff;
+  z-index: 1;
 `;
 
 const NewsHead = styled.View`
   flex-direction: row;
   align-items: center;
   width: 100%;
-  height: 30px;
-  margin-bottom: 20px;
-  z-index: 2;
+  height: 25px;
+  padding: 0px 10px;
+  z-index: 3;
 `;
 
 const NewsHeadText = styled.View`
@@ -53,15 +40,13 @@ const NewsHeadText = styled.View`
   align-items: center;
   width: auto;
   height: 30px;
-  padding: 5px 30px 5px 30px;
-  border-radius: 3px;
-  background-color: white;
 `;
 
 const Text = styled.Text`
-  color: rgba(0, 0, 0, 0.6);
-  font-weight: 500;
-  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  color: #2d3748;
 `;
 
 const ItemWrapper = styled.View`
@@ -153,7 +138,7 @@ const News = () => {
     }
   }, [refreshing]);
 
-  return isLoading ? (
+  return isLoading && fullData.length === 0 ? (
     <Spinner />
   ) : (
     <FlatList
@@ -164,7 +149,7 @@ const News = () => {
       }}
       ListHeaderComponent={
         <Wrapper>
-          <Banner text="News" />
+          <MostReadNews />
         </Wrapper>
       }
       contentContainerStyle={{ paddingBottom: 30 }}
@@ -172,27 +157,16 @@ const News = () => {
       data={fullData}
       renderItem={({ item }) => (
         <ItemWrapper style={{ marginTop: 30 }}>
-          <Shadow startColor="rgba(50, 50, 93, 0.25)" distance={2}>
-            <ContextWrapper>
-              <VerticalBar />
-              <NewsHead>
-                <Shadow
-                  startColor="rgba(0, 0, 0, 0.03)"
-                  distance={4}
-                  style={{
-                    borderRadius: 3,
-                  }}
-                >
-                  <NewsHeadText>
-                    <Text>{item.date}</Text>
-                  </NewsHeadText>
-                </Shadow>
-              </NewsHead>
-              {item.data.map((newscard, index) => (
-                <Newscard newscard={newscard} key={index} />
-              ))}
-            </ContextWrapper>
-          </Shadow>
+          <ContextWrapper>
+            <NewsHead>
+              <NewsHeadText>
+                <Text>{item.date}</Text>
+              </NewsHeadText>
+            </NewsHead>
+            {item.data.map((newscard, index) => (
+              <Newscard newscard={newscard} key={index} />
+            ))}
+          </ContextWrapper>
         </ItemWrapper>
       )}
     />

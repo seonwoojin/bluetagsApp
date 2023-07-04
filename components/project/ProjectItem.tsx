@@ -1,129 +1,109 @@
 import { Path, Svg } from "react-native-svg";
 import styled from "styled-components/native";
-import { Project, SocialUser, User } from "../../libs/schema";
-import { Text, TouchableWithoutFeedback, View } from "react-native";
+import { Project, User } from "../../libs/schema";
 import {
   CompositeNavigationProp,
-  NavigationProp,
   useNavigation,
 } from "@react-navigation/native";
-import {
-  ProjectStackNavParamList,
-  RootNavParamList,
-  TabNavParamList,
-} from "../../navigation/Root";
+import { useState } from "react";
+import { TouchableWithoutFeedback } from "react-native";
 import subscribeProject from "../../libs/subscribeProject";
-import { useEffect, useState } from "react";
 import useMutation from "../../libs/useMutation";
+import { RootNavParamList, TabNavParamList } from "../../navigation/Root";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import Dimension from "../../libs/useDimension";
 
 const ProjectContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 90%;
+  width: ${Dimension.width}px;
   height: 60px;
-  background-color: #ffffff;
-  border: 1px solid #dcdcdc;
-  color: #1f1f1f;
-`;
-
-const Container = styled.View`
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  width: 85%;
-  height: 100%;
-`;
-
-const LogoImage = styled.Image`
-  width: 40px;
-  height: 40px;
-  margin-left: 10px;
-  border-radius: 6px;
-`;
-
-const NoLogoImage = styled.View`
-  width: 40px;
-  height: 40px;
+  padding: 0px 15px;
+  background: #ffffff;
 `;
 
 const Wrapper = styled.View`
-  justify-content: center;
+  flex-direction: row;
+  justify-content: flex-end;
   align-items: center;
-  width: 100%;
+  flex: 1;
   height: 100%;
 `;
 
 const Collection = styled.View`
   flex-direction: row;
   width: 100%;
-  height: 50%;
+  height: 100%;
   align-items: center;
   padding-left: 10px;
+`;
+
+const CollectionH2 = styled.Text`
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  color: #aaaaaa;
 `;
 
 const CollectionText = styled.Text`
   font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 19px;
-  letter-spacing: -0.5px;
+  font-weight: 700;
+  font-size: 16px;
+  color: #2d3748;
 `;
 
-const InfoWrapper = styled.View`
+const ContextWrapper = styled.View`
   flex-direction: row;
-  justify-content: flex-start;
   align-items: center;
-  width: 100%;
-  height: 50%;
+  flex: 7;
+  height: auto;
 `;
 
-const InfoSpan = styled.Text`
-  color: rgba(0, 0, 0, 0.6);
-  margin-right: 5px;
-  font-size: 10px;
-`;
-
-const FloorPrice = styled.View`
+const Index = styled.View`
   flex-direction: row;
   justify-content: center;
-  width: auto;
-  height: 100%;
   align-items: center;
-  padding-left: 10px;
+  width: 20px;
+  height: 100%;
 `;
 
-const PriceText = styled.Text`
+const IndexText = styled.Text`
   font-style: normal;
-  font-weight: 600;
-  font-size: 10px;
-  line-height: 19px;
-  letter-spacing: -0.5px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #2d3748;
 `;
 
-const Volume = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  width: auto;
-  height: 100%;
-  align-items: center;
-  padding-left: 10px;
+const Logo = styled.Image`
+  width: 40px;
+  height: 40px;
+  margin-left: 10px;
+  border-radius: 6px;
+`;
+
+const FakeLogo = styled.View`
+  width: 40px;
+  height: 40px;
+  margin-left: 10px;
+  border-radius: 6px;
 `;
 
 const SubscribeButton = styled.View`
   flex-direction: row;
   justify-content: center;
-  width: 15%;
+  width: 50px;
   height: 100%;
   align-items: center;
 `;
 
 interface Props {
   project?: Project;
-  user: User | SocialUser | null;
-  setUser: any;
+  user?: User | null;
+  setUser?: any;
+  head?: boolean;
+  index?: number;
 }
 
 type NavigationProps = CompositeNavigationProp<
@@ -131,19 +111,37 @@ type NavigationProps = CompositeNavigationProp<
   NativeStackNavigationProp<RootNavParamList>
 >;
 
-export default function ProjectItem({ project, user, setUser }: Props) {
+export default function ProjectItem({
+  project,
+  user,
+  setUser,
+  head,
+  index,
+}: Props) {
   const navigation = useNavigation<NavigationProps>();
   const [subscribe, setSubscribe] = useState<string[]>(
     user ? user.subscribe : []
   );
   const mutation = useMutation("https://www.bluetags.app/api/users/subscribe");
 
-  return !project ? (
+  return head ? (
     <ProjectContainer>
-      <Wrapper>
+      <ContextWrapper>
+        <Index></Index>
+        <FakeLogo />
         <Collection>
-          <CollectionText>Collection</CollectionText>
+          <CollectionH2>#Collection</CollectionH2>
         </Collection>
+      </ContextWrapper>
+      <Wrapper>
+        <SubscribeButton>
+          <Svg width="11" height="15" viewBox="0 0 11 15" fill="none">
+            <Path
+              d="M3.20368 4.99972H8.7918L5.99774 2.20566L3.20368 4.99972ZM6.70407 0.793001L10.7045 4.79345C10.992 5.08098 11.0764 5.50915 10.9202 5.88419C10.7639 6.25924 10.4014 6.50301 9.99506 6.50301H1.99729C1.59412 6.50301 1.22846 6.25924 1.07219 5.88419C0.915923 5.50915 1.00343 5.08098 1.28784 4.79345L5.28829 0.793001C5.67895 0.402333 6.3134 0.402333 6.70407 0.793001ZM3.20368 10.0003L5.99774 12.7943L8.7918 10.0003H3.20368ZM6.70407 14.207C6.3134 14.5977 5.67895 14.5977 5.28829 14.207L1.28784 10.2066C1.00031 9.91902 0.915923 9.49085 1.07219 9.11581C1.22846 8.74076 1.591 8.49699 1.99729 8.49699H9.99819C10.4014 8.49699 10.767 8.74076 10.9233 9.11581C11.0796 9.49085 10.992 9.91902 10.7076 10.2066L6.70719 14.207H6.70407Z"
+              fill="#AAAAAA"
+            />
+          </Svg>
+        </SubscribeButton>
       </Wrapper>
     </ProjectContainer>
   ) : (
@@ -151,66 +149,61 @@ export default function ProjectItem({ project, user, setUser }: Props) {
       onPress={() => {
         navigation.navigate("Project", {
           screen: "ProjectDetail",
-          params: { ...project },
+          params: { ...project! },
         });
       }}
     >
       <ProjectContainer>
-        <Container>
-          <LogoImage source={{ uri: project.logoUrl }} />
-          <Wrapper>
-            <Collection>
-              <CollectionText>{project.title}</CollectionText>
-            </Collection>
-            <InfoWrapper>
-              <FloorPrice>
-                <InfoSpan>Floor :</InfoSpan>
-                <PriceText>2.50 ETH</PriceText>
-              </FloorPrice>
-              <Volume>
-                <InfoSpan>Volume :</InfoSpan>
-                <PriceText>1,123 ETH</PriceText>
-              </Volume>
-            </InfoWrapper>
-          </Wrapper>
-        </Container>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            if (!user) {
-              navigation.navigate("SignIn");
-            } else
-              subscribeProject({
-                subscribeList: subscribe,
-                setSubscribeList: setSubscribe,
-                project,
-                user,
-                setUser,
-                mutation,
-              });
-          }}
-        >
-          <SubscribeButton>
-            {subscribe.includes(project!.key) ? (
-              <Svg
-                width={15}
-                height={15}
-                fill={"#000000"}
-                viewBox="0 0 576 512"
-              >
-                <Path d="M288.1 0l86.5 164 182.7 31.6L428 328.5 454.4 512 288.1 430.2 121.7 512l26.4-183.5L18.9 195.6 201.5 164 288.1 0z" />
-              </Svg>
-            ) : (
-              <Svg
-                width={15}
-                height={15}
-                fill={"#000000"}
-                viewBox="0 0 576 512"
-              >
-                <Path d="M287.9 435.9L150.1 509.1C142.9 513.4 133.1 512.7 125.6 507.4C118.2 502.1 114.5 492.9 115.1 483.9L142.2 328.4L31.11 218.2C24.65 211.9 22.36 202.4 25.2 193.7C28.03 185.1 35.5 178.8 44.49 177.5L197.7 154.8L266.3 13.52C270.4 5.249 278.7 0 287.9 0C297.1 0 305.5 5.25 309.5 13.52L378.1 154.8L531.4 177.5C540.4 178.8 547.8 185.1 550.7 193.7C553.5 202.4 551.2 211.9 544.8 218.2L433.6 328.4L459.9 483.9C461.4 492.9 457.7 502.1 450.2 507.4C442.8 512.7 432.1 513.4 424.9 509.1L287.9 435.9zM226.5 168.8C221.9 178.3 212.9 184.9 202.4 186.5L64.99 206.8L164.8 305.6C172.1 312.9 175.5 323.4 173.8 333.7L150.2 473.2L272.8 407.7C282.3 402.6 293.6 402.6 303 407.7L425.6 473.2L402.1 333.7C400.3 323.4 403.7 312.9 411.1 305.6L510.9 206.8L373.4 186.5C362.1 184.9 353.1 178.3 349.3 168.8L287.9 42.32L226.5 168.8z" />
-              </Svg>
-            )}
-          </SubscribeButton>
-        </TouchableWithoutFeedback>
+        <ContextWrapper>
+          <Index>
+            <IndexText>{index}</IndexText>
+          </Index>
+          <Logo source={{ uri: project!.logoImage }} />
+          <Collection>
+            <CollectionText>{project!.title}</CollectionText>
+          </Collection>
+        </ContextWrapper>
+        <Wrapper>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              if (!user) {
+                navigation.navigate("SignIn");
+              } else
+                subscribeProject({
+                  subscribeList: subscribe,
+                  setSubscribeList: setSubscribe,
+                  project: project!,
+                  user,
+                  setUser,
+                  mutation,
+                });
+            }}
+          >
+            <SubscribeButton>
+              {subscribe.includes(project!.key) ? (
+                <Svg width={15} height={15} viewBox="0 0 15 15" fill="#101010">
+                  <Path
+                    d="M8.58058 2.19365L9.68058 4.39365C9.83058 4.6999 10.2306 4.99365 10.5681 5.0499L12.5618 5.38115C13.8368 5.59365 14.1368 6.51865 13.2181 7.43115L11.6681 8.98115C11.4056 9.24365 11.2618 9.7499 11.3431 10.1124L11.7868 12.0312C12.1368 13.5499 11.3306 14.1374 9.98683 13.3437L8.11808 12.2374C7.78058 12.0374 7.22433 12.0374 6.88058 12.2374L5.01183 13.3437C3.67433 14.1374 2.86183 13.5437 3.21183 12.0312L3.65558 10.1124C3.73683 9.7499 3.59308 9.24365 3.33058 8.98115L1.78058 7.43115C0.868083 6.51865 1.16183 5.59365 2.43683 5.38115L4.43058 5.0499C4.76183 4.99365 5.16183 4.6999 5.31183 4.39365L6.41183 2.19365C7.01183 0.999902 7.98683 0.999902 8.58058 2.19365Z"
+                    stroke="#101010"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </Svg>
+              ) : (
+                <Svg width={15} height={15} viewBox="0 0 15 15" fill="none">
+                  <Path
+                    d="M8.58058 2.19365L9.68058 4.39365C9.83058 4.6999 10.2306 4.99365 10.5681 5.0499L12.5618 5.38115C13.8368 5.59365 14.1368 6.51865 13.2181 7.43115L11.6681 8.98115C11.4056 9.24365 11.2618 9.7499 11.3431 10.1124L11.7868 12.0312C12.1368 13.5499 11.3306 14.1374 9.98683 13.3437L8.11808 12.2374C7.78058 12.0374 7.22433 12.0374 6.88058 12.2374L5.01183 13.3437C3.67433 14.1374 2.86183 13.5437 3.21183 12.0312L3.65558 10.1124C3.73683 9.7499 3.59308 9.24365 3.33058 8.98115L1.78058 7.43115C0.868083 6.51865 1.16183 5.59365 2.43683 5.38115L4.43058 5.0499C4.76183 4.99365 5.16183 4.6999 5.31183 4.39365L6.41183 2.19365C7.01183 0.999902 7.98683 0.999902 8.58058 2.19365Z"
+                    stroke="#101010"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </Svg>
+              )}
+            </SubscribeButton>
+          </TouchableWithoutFeedback>
+        </Wrapper>
       </ProjectContainer>
     </TouchableWithoutFeedback>
   );

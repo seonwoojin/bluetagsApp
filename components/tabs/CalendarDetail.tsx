@@ -59,12 +59,13 @@ const DetailDateTitleView = styled.View`
   justify-content: center;
   align-items: center;
   height: 100%;
-  padding: 5px 10px;
 `;
 
 const DetailDateTitleText = styled.Text`
+  font-style: normal;
+  font-weight: 700;
   font-size: 12px;
-  font-weight: 300;
+  color: #2d3748;
 `;
 
 const DetailDateToDos = styled.View`
@@ -77,11 +78,12 @@ const DetailDateToDos = styled.View`
 
 const Wrapper = styled.View`
   position: relative;
-  flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
   height: auto;
+  padding-left: 5px;
+  gap: 10px;
 `;
 
 const VerticalBar = styled.View<{ height: number }>`
@@ -105,28 +107,48 @@ const HorizontalBar = styled.View`
 `;
 
 const Time = styled.View`
-  flex-direction: row;
+  display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  width: 30px;
+  width: 45px;
+  min-width: 30px;
   height: 20px;
-  margin-right: 3%;
   background-color: white;
 `;
 
 const TimeText = styled.Text`
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 400;
   letter-spacing: -1px;
+  color: #2d3748;
 `;
 
 const DetailDateToDoWrapper = styled.View`
-  width: 90%;
+  width: 100%;
   height: auto;
-  border: 1px solid rgba(25, 31, 40, 0.2);
-  padding: 10px;
-  background-color: white;
+  padding: 10px 20px;
+  background: rgba(37, 124, 255, 0.02);
+  border: 1px solid rgba(37, 124, 255, 0.05);
+  border-radius: 15px;
+`;
+
+const Bar = styled.View<{ class: string }>`
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 3px;
+  border-radius: 5px;
+  background-color: ${(props) =>
+    props.class === "event"
+      ? "#64b5ff"
+      : props.class === "network"
+      ? "#9dce99"
+      : props.class === "partnership"
+      ? "#ffa0d3"
+      : props.class === "announcement"
+      ? "#fcc53a"
+      : null};
 `;
 
 const Button = styled.View<{ detail: string }>`
@@ -265,9 +287,7 @@ export default function CalendarDetail({
   }, [todayDate]);
 
   useEffect(() => {
-    titleRef.current?.measureInWindow((x, y, width, height) => {
-      console.log(height);
-    });
+    titleRef.current?.measureInWindow((x, y, width, height) => {});
   }, [titleRef.current, detail1]);
 
   useEffect(() => {
@@ -295,21 +315,14 @@ export default function CalendarDetail({
               }}
               ref={titleRef}
             >
-              <VerticalBar height={verticalHeight} />
               <DetailDateTitle>
-                <Shadow
-                  distance={2}
-                  style={{ borderRadius: 1 }}
-                  startColor="rgba(0, 0, 0, 0.16)"
-                >
-                  <DetailDateTitleView>
-                    <DetailDateTitleText>
-                      {`${
-                        week[todayDate.getDay()]
-                      } ${todayDate.getDate()}, ${todayDate.getFullYear()}`}
-                    </DetailDateTitleText>
-                  </DetailDateTitleView>
-                </Shadow>
+                <DetailDateTitleView>
+                  <DetailDateTitleText>
+                    {`${
+                      week[todayDate.getDay()]
+                    } ${todayDate.getDate()}, ${todayDate.getFullYear()}`}
+                  </DetailDateTitleText>
+                </DetailDateTitleView>
                 <TouchableOpacity
                   activeOpacity={1}
                   hitSlop={{ top: 30, right: 30, bottom: 30, left: 30 }}
@@ -332,14 +345,6 @@ export default function CalendarDetail({
                   toDos.length === 1 ? (
                     toDos.map((toDo, index) => (
                       <Wrapper key={index}>
-                        <HorizontalBar
-                          style={{
-                            borderBottomColor: "rgba(0, 0, 0, 0.1)",
-                            borderBottomWidth: 2,
-                            borderLeftColor: "rgba(0, 0, 0, 0.1)",
-                            borderLeftWidth: 2,
-                          }}
-                        />
                         <Shadow distance={1} startColor="rgba(0, 0, 0, 0.16)">
                           <Time
                             onLayout={() => {
@@ -388,19 +393,25 @@ export default function CalendarDetail({
                               >
                                 <DetailDateToDoLogo>
                                   <DetailDateToDoLogoImage
-                                    source={{ uri: toDo.project.logoUrl }}
+                                    source={{ uri: toDo.project.logoImage }}
                                   />
                                 </DetailDateToDoLogo>
                               </TouchableWithoutFeedback>
+                              <Bar class={toDo.bluetags[0].toLowerCase()} />
                               <DetailDateToDoLogoTitle
                                 detail={detail1 === toDo.id ? "true" : "false"}
                               >
-                                <DetailDateToDoLogoTitleText>
+                                <DetailDateToDoLogoTitleText numberOfLines={2}>
                                   {toDo.title}
                                 </DetailDateToDoLogoTitleText>
                               </DetailDateToDoLogoTitle>
                             </DetailDateToDo>
                           </TouchableWithoutFeedback>
+                          <DetailDescription detail={"true"}>
+                            <DetailDescriptionText>
+                              {toDo.summary}
+                            </DetailDescriptionText>
+                          </DetailDescription>
                           <DetailDateToDoDeadline detail={"true"}>
                             <DetailDateToDoDeadlineText>{`${new Date(
                               toDo.deadLineStart!
@@ -444,15 +455,10 @@ export default function CalendarDetail({
                                 className="bluetag"
                                 color="#3733FF"
                                 isWhite="false"
-                                text={tag}
+                                text={`#${tag}`}
                               />
                             ))}
                           </BluetagsWrapper>
-                          <DetailDescription detail={"true"}>
-                            <DetailDescriptionText>
-                              {toDo.summary}
-                            </DetailDescriptionText>
-                          </DetailDescription>
                           <TouchableWithoutFeedback
                             onPress={() => {
                               navigation.navigate("BluecardDetail", {
@@ -477,14 +483,6 @@ export default function CalendarDetail({
                       )
                       .map((toDo, index) => (
                         <Wrapper key={index}>
-                          <HorizontalBar
-                            style={{
-                              borderBottomColor: "rgba(0, 0, 0, 0.1)",
-                              borderBottomWidth: 2,
-                              borderLeftColor: "rgba(0, 0, 0, 0.1)",
-                              borderLeftWidth: 2,
-                            }}
-                          />
                           <Shadow distance={1} startColor="rgba(0, 0, 0, 0.16)">
                             <Time
                               onLayout={() => {
@@ -534,21 +532,31 @@ export default function CalendarDetail({
                                 >
                                   <DetailDateToDoLogo>
                                     <DetailDateToDoLogoImage
-                                      source={{ uri: toDo.project.logoUrl }}
+                                      source={{ uri: toDo.project.logoImage }}
                                     />
                                   </DetailDateToDoLogo>
                                 </TouchableWithoutFeedback>
+                                <Bar class={toDo.bluetags[0].toLowerCase()} />
                                 <DetailDateToDoLogoTitle
                                   detail={
                                     detail1 === toDo.id ? "true" : "false"
                                   }
                                 >
-                                  <DetailDateToDoLogoTitleText>
+                                  <DetailDateToDoLogoTitleText
+                                    numberOfLines={2}
+                                  >
                                     {toDo.title}
                                   </DetailDateToDoLogoTitleText>
                                 </DetailDateToDoLogoTitle>
                               </DetailDateToDo>
                             </TouchableWithoutFeedback>
+                            <DetailDescription
+                              detail={detail1 === toDo.id ? "true" : "false"}
+                            >
+                              <DetailDescriptionText>
+                                {toDo.summary}
+                              </DetailDescriptionText>
+                            </DetailDescription>
                             <DetailDateToDoDeadline
                               detail={detail1 === toDo.id ? "true" : "false"}
                             >
@@ -601,18 +609,11 @@ export default function CalendarDetail({
                                       className="bluetag"
                                       color="#3733FF"
                                       isWhite="false"
-                                      text={tag}
+                                      text={`#${tag}`}
                                     />
                                   ))
                                 : null}
                             </BluetagsWrapper>
-                            <DetailDescription
-                              detail={detail1 === toDo.id ? "true" : "false"}
-                            >
-                              <DetailDescriptionText>
-                                {toDo.summary}
-                              </DetailDescriptionText>
-                            </DetailDescription>
                             <TouchableWithoutFeedback
                               onPress={() => {
                                 navigation.navigate("BluecardDetail", {

@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import { Project, SocialUser, User } from "../../libs/schema";
+import { Project, User } from "../../libs/schema";
 import ProjectCard from "./ProjectCard";
 
 const Wrapper = styled.View`
@@ -10,7 +10,7 @@ const Wrapper = styled.View`
 
 interface Props {
   data: Project[];
-  user: User | SocialUser | null;
+  user: User | null;
   setUser: any;
 }
 
@@ -18,7 +18,7 @@ export default function ProjectCardList({ data, user, setUser }: Props) {
   return (
     <Wrapper>
       {data.map((project, index) => (
-        <ProjectCard data={project} user={user} setUser={setUser} key={index} />
+        <ProjectCard data={project} key={index} />
       ))}
     </Wrapper>
   );

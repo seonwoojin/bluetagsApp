@@ -150,12 +150,7 @@ const Search = ({ route: { params }, navigation }: SearchScreenProps) => {
               <>
                 <Title title="Projects" />
                 {data.data.projects.map((project, index) => (
-                  <ProjectCard
-                    key={index}
-                    data={project}
-                    user={user}
-                    setUser={setUser}
-                  />
+                  <ProjectCard key={index} data={project} />
                 ))}
               </>
             ) : null}

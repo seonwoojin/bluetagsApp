@@ -40,7 +40,6 @@ const Tabs = () => {
   return (
     <>
       <Tab.Navigator
-        initialRouteName="Calendar"
         sceneContainerStyle={{
           backgroundColor: "#ffffff",
           paddingTop: Constants.statusBarHeight,
