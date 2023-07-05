@@ -30,19 +30,19 @@ const Overlay = styled.View`
 
 const Tab = createBottomTabNavigator<TabNavParamList>();
 
-const Tabs = () => {
-  const [detail, setDetail] = useState(false);
-  const [notice, setNotice] = useState(false);
-  const [calendarDetail, setCalendarDetail] = useState("");
-  const [toDos, setToDos] = useState<BluecardWithProject[]>([]);
-  const [todayDate, setTodayDate] = useState(new Date());
+interface Props {
+  setToDos: React.Dispatch<React.SetStateAction<BluecardWithProject[]>>;
+  setTodayDate: React.Dispatch<React.SetStateAction<Date>>;
+  setCalendarDetail: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Tabs = ({ setToDos, setTodayDate, setCalendarDetail }: Props) => {
   const isDark = useColorScheme() === "dark";
   return (
     <>
       <Tab.Navigator
         sceneContainerStyle={{
           backgroundColor: "#ffffff",
-          paddingTop: Constants.statusBarHeight,
         }}
         screenOptions={{
           tabBarStyle: {
@@ -61,15 +61,7 @@ const Tabs = () => {
           tabBarItemStyle: {
             justifyContent: "flex-end",
           },
-          header: ({ navigation }) => (
-            <Header
-              navigation={navigation}
-              detail={detail}
-              setDetail={setDetail}
-              notice={notice}
-              setNotice={setNotice}
-            />
-          ),
+          headerShown: false,
         }}
       >
         <Tab.Screen
@@ -145,15 +137,6 @@ const Tabs = () => {
           }}
         />
       </Tab.Navigator>
-      {notice ? <Notice notice={notice} setNotice={setNotice} /> : null}
-      {detail ? <Detail detail={detail} setDetail={setDetail} /> : null}
-      {calendarDetail !== "" ? (
-        <CalendarDetail
-          todayDate={todayDate}
-          toDos={toDos}
-          setCalendarDetail={setCalendarDetail}
-        />
-      ) : null}
     </>
   );
 };

@@ -137,11 +137,9 @@ const BluetagWrapper = styled.View`
 
 interface Props {
   data: BluecardWithProject;
-  fn: () => void;
-  projectFn: () => void;
 }
 
-export default function Bluecard({ data, fn, projectFn }: Props) {
+export default function Bluecard({ data }: Props) {
   const { user, setUser } = useUser();
   const [save] = useMutation(
     `https://www.bluetags.app/api/bluecards/user-save`
@@ -212,7 +210,11 @@ export default function Bluecard({ data, fn, projectFn }: Props) {
       offset={[0, 3]}
       style={{ borderRadius: 15 }}
     >
-      <TouchableWithoutFeedback onPress={fn}>
+      <TouchableWithoutFeedback
+        onPress={() =>
+          navigation.navigate("BluecardDetail", { data: { ...data } })
+        }
+      >
         <BluecardContainer>
           <Logo>
             <LogoImage
@@ -224,7 +226,11 @@ export default function Bluecard({ data, fn, projectFn }: Props) {
               }}
             />
             <InfoWrapper>
-              <TouchableWithoutFeedback onPress={projectFn}>
+              <TouchableWithoutFeedback
+                onPress={() =>
+                  navigation.navigate("ProjectDetail", { ...data.project })
+                }
+              >
                 <ProjectLogo source={{ uri: data.project.logoImage }} />
               </TouchableWithoutFeedback>
               <InfoContainer>

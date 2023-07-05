@@ -126,16 +126,12 @@ interface Props {
   data: BluecardWithProject;
   projectTitle: string;
   projectLogo: string;
-  fn: () => void;
-  projectFn: () => void;
 }
 
 export default function BlueCardHistory({
   data,
   projectTitle,
   projectLogo,
-  fn,
-  projectFn,
 }: Props) {
   const user = useUser();
   const navigation = useNavigation<NavigationProp<RootNavParamList>>();
@@ -157,13 +153,21 @@ export default function BlueCardHistory({
       distance={3}
       style={{ borderRadius: 15, height: 270 }}
     >
-      <TouchableWithoutFeedback onPress={fn}>
+      <TouchableWithoutFeedback
+        onPress={() =>
+          navigation.navigate("BluecardDetail", { data: { ...data } })
+        }
+      >
         <BlueCardContainer>
           <TitleWrapper>
             <TitleContent>
               <TitleText numberOfLines={2}>{data.title}</TitleText>
               <ProjectTitle>
-                <TouchableWithoutFeedback onPress={projectFn}>
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    navigation.navigate("ProjectDetail", { ...data.project })
+                  }
+                >
                   <ProjectTitleText>{projectTitle}</ProjectTitleText>
                 </TouchableWithoutFeedback>
                 <Svg width="2" height="11" viewBox="0 0 2 11" fill="none">

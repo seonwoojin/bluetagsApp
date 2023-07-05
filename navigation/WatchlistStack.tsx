@@ -22,8 +22,6 @@ const WatcListStack = () => {
       }}
     >
       <NativeStack.Screen name="Main" component={WatchList} />
-      <NativeStack.Screen name="BluecardDetail" component={BluecardDetail} />
-      <NativeStack.Screen name="ProjectDetail" component={ProjectDetail} />
     </NativeStack.Navigator>
   );
 };

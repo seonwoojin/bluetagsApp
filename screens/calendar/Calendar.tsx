@@ -573,7 +573,6 @@ interface Response {
 
 const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
   const { user } = useUser();
-  const navigation = useNavigation<NavigationProp<CalendarStackNavParamList>>();
 
   const { data, isLoading, error, refetch } = useQuery<Response>(
     "upcoming",
@@ -1177,10 +1176,7 @@ const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
           </LegendContainer>
           {data?.data.upComingEvents ? (
             <BluecardWrapper>
-              <Upcoming
-                navigation={navigation}
-                data={data.data.upComingEvents}
-              />
+              <Upcoming data={data.data.upComingEvents} />
             </BluecardWrapper>
           ) : null}
         </Wrapper>

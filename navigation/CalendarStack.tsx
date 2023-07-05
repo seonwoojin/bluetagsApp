@@ -5,8 +5,6 @@ import { CalendarStackNavParamList } from "./Root";
 import UserDetail from "../screens/user/UserDetail";
 import Calendar from "../screens/calendar/Calendar";
 import { BluecardWithProject, Project } from "../libs/schema";
-import BluecardDetail from "../screens/bluecard/BluecardDetail";
-import ProjectDetail from "../screens/project/ProjectDetail";
 
 const NativeStack = createNativeStackNavigator<CalendarStackNavParamList>();
 
@@ -41,8 +39,6 @@ const CalendarStack = ({
           />
         )}
       </NativeStack.Screen>
-      <NativeStack.Screen name="BluecardDetail" component={BluecardDetail} />
-      <NativeStack.Screen name="ProjectDetail" component={ProjectDetail} />
     </NativeStack.Navigator>
   );
 };

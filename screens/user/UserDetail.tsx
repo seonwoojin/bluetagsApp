@@ -1,51 +1,63 @@
-import { useInfiniteQuery } from "react-query";
-import { userInfo } from "../../libs/api";
-import { useUser } from "../../libs/context";
-import { BluecardWithProject } from "../../libs/schema";
-import { useState } from "react";
-import { FlatList } from "react-native";
-import Banner from "../../components/Banner";
-import { Shadow } from "react-native-shadow-2";
-import styled from "styled-components/native";
-import Title from "../../components/Title";
-import BlueCardHistory from "../../components/bluecard/BlueCardHistory";
-import Dimension from "../../libs/useDimension";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { HomeStackNavParamList } from "../../navigation/Root";
+import { useUser } from "../../libs/context";
+import { BluecardWithProject, CommentWithUser } from "../../libs/schema";
+import { RootNavParamList } from "../../navigation/Root";
+import { useQuery } from "react-query";
 import Spinner from "../../components/Spinner";
+import { userBluecards, userComments, userUpcoming } from "../../libs/api";
+import { useState } from "react";
+import styled from "styled-components/native";
+import Upcoming from "../../components/Upcoming";
+import Greeting from "../../components/Greeting";
+import CommentUser from "../../components/bluecard/CommentUser";
+import BluecardSlider from "../../components/slider/BluecardSlider";
+import { RefreshControl, TouchableWithoutFeedback } from "react-native";
 
-const Container = styled.View`
-  align-items: center;
+const Container = styled.ScrollView`
   width: 100%;
-  height: 300px;
-  margin-top: 20px;
+  height: auto;
 `;
 
-const Wrapper = styled.View`
+const UserWrapper = styled.View`
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: auto;
+`;
+
+const UpcomingWrapper = styled.View`
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: auto;
-  margin-top: 60px;
-  margin-bottom: 30px;
 `;
 
-const InfoWrapper = styled.View`
+const LeftContext = styled.View`
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   align-items: center;
-  padding: 30px 10px;
-  width: 80%;
-  height: 80px;
-  background: #f3f4f4;
-  border: 1px solid rgba(25, 31, 40, 0.1);
-  border-radius: 4px;
+  width: 100%;
+  height: auto;
+  padding: 25px 20px;
+  background-color: #ffffff;
+  gap: 10px;
+`;
+
+const UserProfilePrev = styled.View`
+  width: 100px;
+  min-width: 100px;
+  height: 100px;
+  margin-right: 50px;
+  border-radius: 50%;
+  background: #dddddd;
 `;
 
 const UserProfile = styled.View`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  margin-right: 50px;
 `;
 
 const UserProfileImage = styled.Image`
@@ -53,147 +65,310 @@ const UserProfileImage = styled.Image`
   height: 100%;
 `;
 
-const Info = styled.View`
-  display: flex;
+const UserProfileWrapper = styled.View`
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: auto;
+  height: auto;
+  gap: 10px;
+`;
+
+const UserTitle = styled.View`
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 0px;
-  gap: 5px;
-  width: 64px;
-  height: 60px;
-`;
-
-const InfoCount = styled.Text`
-  color: #434447;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 22px;
-`;
-
-const InfoTitle = styled.Text`
-  color: #434447;
-  font-weight: 400;
-  font-size: 11px;
-`;
-
-const ItemWrapper = styled.View`
-  justify-content: center;
-  align-items: center;
-  width: ${Dimension.width}px;
+  text-align: center;
+  width: auto;
   height: auto;
 `;
 
-const HSeparator = styled.View`
-  height: 15px;
+const UserTitleText = styled.Text`
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  color: #010101;
 `;
 
-type UserDetailScreenProps = NativeStackScreenProps<
-  HomeStackNavParamList,
-  "UserDetail"
->;
+const UserEdit = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 90px;
+  height: 32px;
+  background: #6271eb;
+  border-radius: 8px;
+`;
+
+const UserEditText = styled.Text`
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  color: #ffffff;
+`;
+
+const JoinDate = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  height: auto;
+`;
+
+const JoinDateText = styled.Text`
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  color: #93989a;
+`;
+
+const RightContext = styled.View`
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+  height: 120px;
+  background-color: #ffffff;
+`;
+
+const ContextWrapper = styled.View`
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 320px;
+  overflow: hidden;
+  gap: 15px;
+`;
+
+const CommentWrapper = styled.View`
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  gap: 15px;
+`;
+
+const BluecardWrapper = styled.View`
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  padding: 0px 30px 30px 30px;
+  background-color: #ffffff;
+`;
+
+const BluecardWrapperTitle = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+`;
+
+const BluecardWrapperTitleText = styled.Text`
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  color: #010101;
+`;
+
+const SubSelect = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 70px;
+  height: 25px;
+  border: 1px solid #257cff;
+  border-radius: 12px;
+`;
+
+const SubSelectText = styled.Text`
+  font-weight: 700;
+  font-size: 10px;
+  color: #257cff;
+`;
 
 interface Response {
   data: {
-    bluecards: BluecardWithProject[];
+    history: BluecardWithProject[];
+    saved: BluecardWithProject[];
+  };
+  status: number;
+}
+
+interface ResponseUpcoming {
+  data: {
+    upComingEvents: BluecardWithProject[];
   };
 }
 
-const UserDetail: React.FC<UserDetailScreenProps> = ({ navigation }) => {
+interface ResponseComments {
+  data: {
+    comments: CommentWithUser[];
+  };
+}
+
+type UserDetailScreenProps = NativeStackScreenProps<
+  RootNavParamList,
+  "UserDetail"
+>;
+
+const UserDetail = ({ navigation }: UserDetailScreenProps) => {
   const { user } = useUser();
-  const { data, isLoading, hasNextPage, fetchNextPage, refetch } =
-    useInfiniteQuery<Response>(
-      `${user!.name}`,
-      ({ pageParam = "undefined" }) => userInfo(user!.id, pageParam),
-      {
-        getNextPageParam: (lastPage, allPages) => {
-          if (lastPage.data.bluecards.length === 0) {
-            return undefined;
-          }
-          return lastPage.data.bluecards[lastPage.data.bluecards.length - 1].id;
-        },
-      }
-    );
+
+  const { data, isLoading, refetch } = useQuery<Response>(
+    `${user!.id}bluecard`,
+    () => userBluecards(user!.id),
+    { enabled: user ? true : false }
+  );
+  const {
+    data: upcoming,
+    isLoading: upcomingIsLoading,
+    refetch: upcomingRefetch,
+  } = useQuery<ResponseUpcoming>(
+    `${user!.id}upcoming`,
+    () => userUpcoming(user!.id),
+    { enabled: user ? true : false }
+  );
+  const {
+    data: comments,
+    isLoading: commentsIsLoading,
+    refetch: commentsRefetch,
+  } = useQuery<ResponseComments>(
+    `${user!.id}comments`,
+    () => userComments(user!.id),
+    { enabled: user ? true : false }
+  );
+
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await refetch();
+    await upcomingRefetch();
+    await commentsRefetch();
     setRefreshing(false);
   };
 
-  return isLoading ? (
+  const loading = isLoading || upcomingIsLoading || commentsIsLoading || !user;
+
+  return loading ? (
     <Spinner />
-  ) : data ? (
-    <FlatList
-      contentContainerStyle={{ paddingBottom: 30 }}
-      onRefresh={onRefresh}
-      refreshing={refreshing}
-      ListHeaderComponent={
-        <Container>
-          <Banner text={"My account"} />
-          <Wrapper>
-            <Shadow
-              startColor="rgba(0, 0, 0, 0.03)"
-              offset={[0, 3]}
-              distance={8}
-              style={{
-                borderRadius: 10,
-                height: 80,
-              }}
-            >
-              <InfoWrapper>
-                <UserProfile>
-                  <UserProfileImage
-                    source={{
-                      uri: user!.profile.includes("googleusercontent")
-                        ? user!.profile
-                        : `https://imagedelivery.net/o9OxHWpSBsqZquvzmxx1bQ/${
-                            user!.profile
-                          }/avatar`,
-                    }}
-                  />
-                </UserProfile>
-                <Info>
-                  <InfoCount>{user!.readBlueCard.length}</InfoCount>
-                  <InfoTitle>Bluecards</InfoTitle>
-                </Info>
-                <Info>
-                  <InfoCount>{23}</InfoCount>
-                  <InfoTitle>News</InfoTitle>
-                </Info>
-                <Info>
-                  <InfoCount>{user!.subscribe.length}</InfoCount>
-                  <InfoTitle>Subscribe</InfoTitle>
-                </Info>
-              </InfoWrapper>
-            </Shadow>
-          </Wrapper>
-          <Title title="History" />
-        </Container>
+  ) : (
+    <Container
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-      onEndReached={() => {
-        if (hasNextPage) fetchNextPage();
-      }}
-      onEndReachedThreshold={0.75}
-      data={data.pages.map((page) => page.data.bluecards).flat()}
-      renderItem={({ item }) => (
-        <ItemWrapper>
-          <BlueCardHistory
-            data={item}
-            projectLogo={item.project.logoImage}
-            projectTitle={item.project.title}
-            fn={() => {
-              navigation.navigate("BluecardDetail", { data: { ...item } });
-            }}
-            projectFn={() => {
-              navigation.navigate("ProjectDetail", { ...item.project });
-            }}
+    >
+      <UserWrapper>
+        <LeftContext>
+          {user?.profile === "" ? (
+            <UserProfilePrev />
+          ) : (
+            <UserProfile>
+              <UserProfileImage
+                source={{
+                  uri: user!.profile.includes("googleusercontent")
+                    ? user!.profile
+                    : `https://imagedelivery.net/o9OxHWpSBsqZquvzmxx1bQ/${
+                        user!.profile
+                      }/avatar`,
+                }}
+              />
+            </UserProfile>
+          )}
+          <UserProfileWrapper>
+            <UserTitle>
+              <UserTitleText>{user?.name}</UserTitleText>
+            </UserTitle>
+            <UserEdit>
+              <UserEditText>Edit Profile</UserEditText>
+            </UserEdit>
+            <JoinDate>
+              <JoinDateText>{`Joined ${new Date(
+                user?.createdAt!
+              ).getMonth()} ${new Date(
+                user?.createdAt!
+              ).getFullYear()}`}</JoinDateText>
+            </JoinDate>
+          </UserProfileWrapper>
+        </LeftContext>
+        <RightContext>
+          <Greeting isUser={true} name={user?.name} />
+        </RightContext>
+      </UserWrapper>
+      <UpcomingWrapper>
+        {upcoming?.data && upcoming.data.upComingEvents.length > 0 ? (
+          <Upcoming
+            isUser={true}
+            path="/calendar"
+            data={upcoming.data.upComingEvents
+              .filter((event) => user?.calendar.includes(event.id))
+              .slice(0, 3)}
           />
-        </ItemWrapper>
-      )}
-      ItemSeparatorComponent={HSeparator}
-    />
-  ) : null;
+        ) : null}
+      </UpcomingWrapper>
+      {data?.data.history && data.data.history.length > 0 ? (
+        <BluecardWrapper>
+          <BluecardWrapperTitle>
+            <BluecardWrapperTitleText>History</BluecardWrapperTitleText>
+            <TouchableWithoutFeedback
+              onPress={() => navigation.navigate("UserHistory")}
+            >
+              <SubSelect>
+                <SubSelectText>VIEW ALL</SubSelectText>
+              </SubSelect>
+            </TouchableWithoutFeedback>
+          </BluecardWrapperTitle>
+          <BluecardSlider data={data.data.history.slice(0, 3)} />
+        </BluecardWrapper>
+      ) : null}
+      {data?.data.saved && data.data.saved.length > 0 ? (
+        <BluecardWrapper>
+          <BluecardWrapperTitle>
+            <BluecardWrapperTitleText>Saved</BluecardWrapperTitleText>
+            <TouchableWithoutFeedback
+              onPress={() => navigation.navigate("UserSaved")}
+            >
+              <SubSelect>
+                <SubSelectText>VIEW ALL</SubSelectText>
+              </SubSelect>
+            </TouchableWithoutFeedback>
+          </BluecardWrapperTitle>
+          <BluecardSlider data={data.data.saved.slice(0, 3)} />
+        </BluecardWrapper>
+      ) : null}
+      <BluecardWrapper style={{ marginBottom: 30 }}>
+        <BluecardWrapperTitle>
+          <BluecardWrapperTitleText>Comments</BluecardWrapperTitleText>
+          <TouchableWithoutFeedback
+            onPress={() => navigation.navigate("UserComment")}
+          >
+            <SubSelect>
+              <SubSelectText>VIEW ALL</SubSelectText>
+            </SubSelect>
+          </TouchableWithoutFeedback>
+        </BluecardWrapperTitle>
+        <CommentWrapper>
+          {comments?.data.comments.slice(0, 3).map((comment, index) => (
+            <CommentUser
+              key={index}
+              touch={() =>
+                navigation.navigate("BluecardDetail", {
+                  bluecardId: comment.blueCardId,
+                })
+              }
+              comment={comment}
+            />
+          ))}
+        </CommentWrapper>
+      </BluecardWrapper>
+    </Container>
+  );
 };
 
 export default UserDetail;

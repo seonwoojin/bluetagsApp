@@ -1,7 +1,10 @@
 import styled from "styled-components/native";
 import { BluecardWithProject } from "../libs/schema";
-import { NavigationProp } from "@react-navigation/native";
-import { CalendarStackNavParamList } from "../navigation/Root";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import {
+  CalendarStackNavParamList,
+  RootNavParamList,
+} from "../navigation/Root";
 import { TouchableWithoutFeedback } from "react-native";
 
 const BluecardWrapper = styled.View<{ isUser?: boolean }>`
@@ -139,7 +142,6 @@ interface Props {
   data: BluecardWithProject[];
   path?: string;
   isUser?: boolean;
-  navigation: NavigationProp<CalendarStackNavParamList>;
 }
 
 const monthName = [
@@ -157,15 +159,20 @@ const monthName = [
   "Dec",
 ];
 
-export default function Upcoming({ data, path, isUser, navigation }: Props) {
+export default function Upcoming({ data, path, isUser }: Props) {
+  const navigation = useNavigation<NavigationProp<RootNavParamList>>();
   return (
     <BluecardWrapper isUser={isUser}>
       <BluecardWrapperTitle>
         <BluecardWrapperTitleText>Upcoming Event</BluecardWrapperTitleText>
         {path ? (
-          <SubSelect>
-            <SubSelectText>VIEW ALL</SubSelectText>
-          </SubSelect>
+          <TouchableWithoutFeedback
+            onPress={() => navigation.navigate("Tabs", { screen: "Calendar" })}
+          >
+            <SubSelect>
+              <SubSelectText>VIEW ALL</SubSelectText>
+            </SubSelect>
+          </TouchableWithoutFeedback>
         ) : null}
       </BluecardWrapperTitle>
       <UpcomingWrapper>

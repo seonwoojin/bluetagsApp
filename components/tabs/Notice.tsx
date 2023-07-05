@@ -15,7 +15,7 @@ import { useQuery } from "react-query";
 import { notifications } from "../../libs/api";
 import { Notification } from "../../libs/schema";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { HomeStackNavParamList } from "../../navigation/Root";
+import { HomeStackNavParamList, RootNavParamList } from "../../navigation/Root";
 
 const UserTextDetail = styled.View`
   position: absolute;
@@ -201,7 +201,7 @@ interface Response {
 
 export default function Notice({ notice, setNotice }: Props) {
   const { user } = useUser();
-  const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
+  const navigation = useNavigation<NavigationProp<RootNavParamList>>();
   const { data, isLoading, refetch } = useQuery<Response>(
     ["notifications", "notices"],
     notifications

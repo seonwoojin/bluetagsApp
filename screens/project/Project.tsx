@@ -6,18 +6,19 @@ import styled from "styled-components/native";
 import {
   FlatList,
   RefreshControl,
+  ScrollView,
   TouchableHighlight,
   TouchableWithoutFeedback,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { useUser } from "../../libs/context";
 import Spinner from "../../components/Spinner";
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { TabNavParamList } from "../../navigation/Root";
+import { WatchListStackNavParamList } from "../../navigation/Root";
 import ProjectCard from "../../components/project/ProjectCard";
 import MostReadNews from "../../components/MostReadNews";
 import { Path, Svg } from "react-native-svg";
 import { Shadow } from "react-native-shadow-2";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 const Wrapper = styled.ScrollView``;
 
@@ -194,7 +195,7 @@ const FilterSearch = styled.TextInput`
 `;
 
 const ProjectScreeen: React.FC<
-  BottomTabScreenProps<TabNavParamList, "Project">
+  NativeStackScreenProps<WatchListStackNavParamList, "Main">
 > = ({ navigation }) => {
   const { user, setUser } = useUser();
   const { data, isLoading, refetch } = useQuery<ProjectsResponse>(
@@ -218,13 +219,15 @@ const ProjectScreeen: React.FC<
   }, [data]);
 
   useEffect(() => {
-    if (filter.length === 0) {
-      setProjects(data!.data.projects);
-    } else {
-      const array = data!.data.projects.filter((item) =>
-        filter.includes(item.category)
-      );
-      setProjects(array);
+    if (!isLoading) {
+      if (filter.length === 0) {
+        setProjects(data!.data.projects);
+      } else {
+        const array = data!.data.projects.filter((item) =>
+          filter.includes(item.category)
+        );
+        setProjects(array);
+      }
     }
   }, [filter]);
 
@@ -394,17 +397,17 @@ const ProjectScreeen: React.FC<
               </FilterWrapper>
             </TouchableWithoutFeedback>
             <ProjectItem head={true} />
-            <FlatList
-              data={projects}
-              renderItem={({ item, index }) => (
+            <ScrollView>
+              {projects.map((project, index) => (
                 <ProjectItem
+                  key={index}
                   user={user}
                   setUser={setUser}
-                  project={item}
+                  project={project}
                   index={index + 1}
                 />
-              )}
-            />
+              ))}
+            </ScrollView>
           </ProjectList>
         </LeftSide>
         <MostReadNews />

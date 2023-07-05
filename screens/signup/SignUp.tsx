@@ -2,7 +2,6 @@ import styled from "styled-components/native";
 import Dimension from "../../libs/useDimension";
 import { Path, Svg } from "react-native-svg";
 import { TouchableWithoutFeedback } from "react-native";
-import Logo from "../../components/Logo";
 import { useEffect, useRef, useState } from "react";
 import useMutation from "../../libs/useMutation";
 import { useForm } from "react-hook-form";
@@ -15,66 +14,75 @@ import Constants from "expo-constants";
 const SafeArea = styled.SafeAreaView`
   flex: 1;
 `;
-const Scroll = styled.ScrollView`
-  padding-top: ${Dimension.height * 0.1}px;
-`;
+const Scroll = styled.ScrollView``;
 
 const Container = styled.View`
-  align-items: center;
-  width: ${Dimension.width}px;
-  overflow-x: hidden;
-`;
-
-const LoginContainer = styled.View`
+  position: relative;
   justify-content: center;
   align-items: center;
   width: ${Dimension.width}px;
   height: auto;
-  margin-bottom: 50px;
-  padding-top: 10px;
+  padding-top: 50px;
+  background-color: #ffffff;
 `;
 
-const LogoSvg = styled.View`
-  display: flex;
-  width: ${Dimension.width}px;
-  margin-top: ${Dimension.height * 0.05}px;
-  margin-bottom: ${Dimension.height * 0.03}px;
-  margin-left: ${Dimension.width * 0.08}px;
+const Logo = styled.View`
+  position: absolute;
+  left: 35px;
+  top: 85px;
+  z-index: 99;
+`;
+
+const LoginContainer = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
 `;
 
 const FormContainer = styled.View`
-  justify-content: flex-start;
-  align-items: flex-start;
-  width: ${Dimension.width * 0.85}px;
-  height: 100%;
-`;
-
-const TitleContainer = styled.View`
-  flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  width: ${Dimension.width * 0.85}px;
-  height: 42px;
-  margin-bottom: 30px;
-`;
-
-const TitleText = styled.Text`
-  font-size: 26px;
-  color: #1c1b1b;
+  width: 100%;
+  height: auto;
+  padding: 50px 35px;
+  padding-bottom: 85px;
+  background-color: #ffffff;
+  border-radius: 15px;
 `;
 
 const Form = styled.View`
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: auto;
+`;
+
+const TitleContainer = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 25px;
+  margin-bottom: 20px;
+`;
+
+const TitleText = styled.Text`
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  color: #2d3748;
 `;
 
 const InputContainer = styled.View`
   justify-content: center;
   align-items: center;
-  width: ${Dimension.width * 0.85}px;
+  width: 100%;
   height: auto;
   margin-bottom: 20px;
+  padding: 0px 0px;
   background-color: inherit;
+  gap: 25px;
 `;
 
 const InputWrapper = styled.View`
@@ -93,7 +101,7 @@ const Label = styled.View`
 `;
 
 const LabelText = styled.Text`
-  color: #4f4f4f;
+  color: #2d3748;
   font-size: 12px;
   font-weight: 600;
 `;
@@ -106,13 +114,18 @@ const LabelErrorText = styled.Text`
 `;
 
 const Input = styled.TextInput<{ error?: string }>`
+  flex-direction: row;
+  align-items: center;
   width: 100%;
-  height: 40px;
-  padding-left: 15px;
+  height: 50px;
+  padding: 0px 20px;
   border: ${(props) =>
-    props.error && props.error !== "" ? "1px solid red" : "1px solid #4f4f4f"};
-  border-radius: 4px;
+    props.error && props.error !== "" ? "1px solid red" : "1px solid #E2E8F0"};
+  border-radius: 15px;
+  font-style: normal;
+  font-weight: 400;
   font-size: 14px;
+  color: #2d3748;
 `;
 
 const CheckBoxTitle = styled.View`
@@ -169,9 +182,9 @@ const CheckBoxErrorText = styled.Text`
 const ButtonWrapper = styled.View`
   justify-content: center;
   align-items: flex-end;
-  width: ${Dimension.width * 0.85}px;
-  height: 40px;
-  margin-bottom: 10px;
+  width: 100%;
+  height: 45px;
+  margin-bottom: 20px;
 `;
 
 const LoginButton = styled.View`
@@ -181,10 +194,11 @@ const LoginButton = styled.View`
   width: 100%;
   height: 100%;
   background-color: #0075ff;
-  border-radius: 4px;
+  border-radius: 12px;
 `;
 
 const ButtonText = styled.Text`
+  font-style: normal;
   font-size: 14px;
   font-weight: 700;
   color: #ffffff;
@@ -326,13 +340,39 @@ const SignUp = ({ navigation }: SignUpScreenProps) => {
     }
   }, [error, setError]);
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+
+    return () => {
+      navigation.setOptions({
+        headerShown: true,
+      });
+    };
+  }, []);
+
   return (
     <Scroll>
       <Container>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            navigation.navigate("Tabs", {
+              screen: "Home",
+              params: { screen: "Main" },
+            });
+          }}
+        >
+          <Logo>
+            <Svg width="35" height="35" viewBox="0 0 43 56" fill="none">
+              <Path
+                d="M42.0994 49.8155C33.6497 41.5695 33.6497 28.2304 42.0994 19.9844L21.5964 0L0 21.0758L35.7869 56L42.0994 49.8398V49.8155Z"
+                fill="#257CFF"
+              />
+            </Svg>
+          </Logo>
+        </TouchableWithoutFeedback>
         <LoginContainer>
-          <LogoSvg>
-            <Logo />
-          </LogoSvg>
           <FormContainer>
             <TitleContainer>
               <TitleText>Sign up</TitleText>

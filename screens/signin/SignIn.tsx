@@ -19,31 +19,20 @@ import onNext from "../../libs/nextRef";
 WebBrowser.maybeCompleteAuthSession();
 
 const Container = styled.View`
-  justify-content: flex-start;
-  align-items: center;
-  width: ${Dimension.width}px;
-  height: ${Dimension.height}px;
-  padding-top: 30px;
-  padding-left: 0px;
-  overflow-x: hidden;
-`;
-
-const InfographicContainer = styled.View`
   position: relative;
-  display: flex;
   justify-content: center;
   align-items: center;
-  width: ${Dimension.width * 0.7}px;
-  height: ${Dimension.height * 0.35}px;
-  min-height: 280px;
-  margin: 30px 0px;
-  border-radius: 20px;
-  overflow: hidden;
+  width: ${Dimension.width}px;
+  height: auto;
+  padding-top: 50px;
+  background-color: #ffffff;
 `;
 
-const Infographic = styled.Image`
-  width: 100%;
-  height: 100%;
+const Logo = styled.View`
+  position: absolute;
+  left: 35px;
+  top: 85px;
+  z-index: 99;
 `;
 
 const LoginContainer = styled.View`
@@ -52,30 +41,35 @@ const LoginContainer = styled.View`
   align-items: center;
   width: 100%;
   height: auto;
-  margin-bottom: 50px;
 `;
 
 const FormContainer = styled.View`
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: auto;
+  padding: 50px 35px;
+  padding-bottom: 85px;
+  background-color: #ffffff;
+  border-radius: 15px;
 `;
 
 const Form = styled.View`
   justify-content: center;
   align-items: center;
-  width: 20px;
+  width: 100%;
+  height: auto;
 `;
 
 const InputContainer = styled.View`
   justify-content: center;
   align-items: center;
-  width: ${Dimension.width * 0.85}px;
+  width: 100%;
   height: auto;
   margin-bottom: 20px;
   padding: 0px 0px;
   background-color: inherit;
+  gap: 25px;
 `;
 
 const InputWrapper = styled.View`
@@ -94,7 +88,7 @@ const Label = styled.View`
 `;
 
 const LabelText = styled.Text`
-  color: #4f4f4f;
+  color: #2d3748;
   font-size: 12px;
   font-weight: 600;
 `;
@@ -107,44 +101,76 @@ const LabelErrorText = styled.Text`
 `;
 
 const Input = styled.TextInput<{ error?: string }>`
+  flex-direction: row;
+  align-items: center;
   width: 100%;
-  height: 40px;
-  padding-left: 15px;
+  height: 50px;
+  padding: 0px 20px;
   border: ${(props) =>
-    props.error && props.error !== "" ? "1px solid red" : "1px solid #4f4f4f"};
-  border-radius: 4px;
+    props.error && props.error !== "" ? "1px solid red" : "1px solid #E2E8F0"};
+  border-radius: 15px;
+  font-style: normal;
+  font-weight: 400;
   font-size: 14px;
+  color: #2d3748;
+`;
+
+const TitleContainer = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 25px;
+  margin-bottom: 20px;
+`;
+
+const TitleContainerText = styled.Text`
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  color: #2d3748;
 `;
 
 const SocialLoginContainer = styled.View`
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
   width: ${Dimension.width * 0.85}px;
   height: auto;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `;
 
 const SocialLogin = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 40px;
-  border-radius: 4px;
-  border: 1px solid #4f4f4f;
+  width: 75px;
+  height: 75px;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
 `;
 
-const SocialLoginText = styled.Text`
-  font-size: 16px;
-  font-weight: 600;
+const OrDiv = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+`;
+
+const OrDivText = styled.Text`
+  font-weight: 700;
+  font-size: 18px;
+  color: #a0aec0;
 `;
 
 const ButtonWrapper = styled.View`
   justify-content: center;
   align-items: flex-end;
-  width: ${Dimension.width * 0.85}px;
-  height: 40px;
-  margin-bottom: 10px;
+  width: 100%;
+  height: 45px;
+  margin-bottom: 20px;
 `;
 
 const LoginButton = styled.View`
@@ -154,27 +180,44 @@ const LoginButton = styled.View`
   width: 100%;
   height: 100%;
   background-color: #0075ff;
-  border-radius: 4px;
+  border-radius: 12px;
 `;
 
 const ButtonText = styled.Text`
+  font-style: normal;
   font-size: 14px;
   font-weight: 700;
   color: #ffffff;
+`;
+
+const LinkWrapper = styled.View`
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  height: auto;
 `;
 
 const LinkBox = styled.View`
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  width: ${Dimension.width * 0.85}px;
+  width: auto;
   margin-bottom: 20px;
+  gap: 10px;
 `;
 
-const LinkBoxText = styled.Text`
-  font-weight: 600;
-  color: black;
-  font-size: 16px;
+const LinkBoxTextFirst = styled.Text`
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  color: #a0aec0;
+`;
+
+const LinkBoxTextSecond = styled.Text`
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  color: #257cff;
 `;
 
 const SignUp = styled.View`
@@ -337,6 +380,18 @@ const SignIn = ({ navigation }: SignInScreenProps) => {
     }
   }, [error, setError]);
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+
+    return () => {
+      navigation.setOptions({
+        headerShown: true,
+      });
+    };
+  }, []);
+
   return (
     <KeyboardAwareScrollView>
       <Container>
@@ -348,12 +403,40 @@ const SignIn = ({ navigation }: SignInScreenProps) => {
             });
           }}
         >
-          <InfographicContainer>
-            <Infographic source={require(".././../assets/logo.png")} />
-          </InfographicContainer>
+          <Logo>
+            <Svg width="35" height="35" viewBox="0 0 43 56" fill="none">
+              <Path
+                d="M42.0994 49.8155C33.6497 41.5695 33.6497 28.2304 42.0994 19.9844L21.5964 0L0 21.0758L35.7869 56L42.0994 49.8398V49.8155Z"
+                fill="#257CFF"
+              />
+            </Svg>
+          </Logo>
         </TouchableWithoutFeedback>
         <LoginContainer>
           <FormContainer>
+            <TitleContainer>
+              <TitleContainerText>Sign in with</TitleContainerText>
+            </TitleContainer>
+            <TouchableWithoutFeedback
+              disabled={!request}
+              onPress={() => {
+                promptAsync({ showInRecents: true });
+              }}
+            >
+              <SocialLoginContainer>
+                <SocialLogin>
+                  <Svg width="25" height="25" viewBox="0 0 25 25" fill="none">
+                    <Path
+                      d="M22.6794 10.8819L22.5734 10.4323H12.8028V14.5677H18.6406C18.0345 17.4458 15.222 18.9608 12.9247 18.9608C11.2531 18.9608 9.49109 18.2577 8.32484 17.1275C7.70953 16.5217 7.21974 15.8005 6.88353 15.0051C6.54731 14.2098 6.37126 13.356 6.36547 12.4925C6.36547 10.7506 7.14828 9.00828 8.28734 7.86219C9.4264 6.71609 11.1467 6.07484 12.8572 6.07484C14.8161 6.07484 16.22 7.115 16.745 7.58937L19.6836 4.66625C18.8216 3.90875 16.4534 2 12.7625 2C9.91484 2 7.18437 3.09078 5.18844 5.08015C3.21875 7.03906 2.19922 9.87172 2.19922 12.5C2.19922 15.1283 3.16391 17.8194 5.07266 19.7937C7.11219 21.8994 10.0006 23 12.9748 23C15.6809 23 18.2459 21.9397 20.0741 20.0159C21.8712 18.1222 22.8008 15.5019 22.8008 12.755C22.8008 11.5986 22.6845 10.9119 22.6794 10.8819Z"
+                      fill="#2D3748"
+                    />
+                  </Svg>
+                </SocialLogin>
+              </SocialLoginContainer>
+            </TouchableWithoutFeedback>
+            <OrDiv>
+              <OrDivText>or</OrDivText>
+            </OrDiv>
             <Form>
               <InputContainer>
                 <InputWrapper>
@@ -387,68 +470,34 @@ const SignIn = ({ navigation }: SignInScreenProps) => {
                   />
                 </InputWrapper>
               </InputContainer>
-              <TouchableWithoutFeedback
-                disabled={!request}
-                onPress={() => {
-                  promptAsync({ showInRecents: true });
-                }}
-              >
-                <SocialLoginContainer>
-                  <SocialLogin>
-                    <SocialLoginText>Sign in with google</SocialLoginText>
-                    <Svg
-                      style={{ marginLeft: 10 }}
-                      width="20"
-                      height="20"
-                      viewBox="0 0 14 15"
-                      fill="none"
-                    >
-                      <G clipPath="url(#clip0_684_5624)">
-                        <Path
-                          d="M13.9935 7.29848C13.9935 6.71146 13.9459 6.28309 13.8428 5.83887H7.13965V8.48837H11.0742C10.995 9.1468 10.5666 10.1384 9.61464 10.8047L9.6013 10.8934L11.7207 12.5353L11.8675 12.55C13.2161 11.3045 13.9935 9.47203 13.9935 7.29848Z"
-                          fill="#4285F4"
-                        />
-                        <Path
-                          d="M7.13965 14.2792C9.06727 14.2792 10.6855 13.6445 11.8675 12.5499L9.61464 10.8046C9.01177 11.225 8.20261 11.5186 7.13965 11.5186C5.25167 11.5186 3.64927 10.2732 3.07806 8.55176L2.99434 8.55887L0.790539 10.2644L0.761719 10.3445C1.93575 12.6767 4.3473 14.2792 7.13965 14.2792Z"
-                          fill="#34A853"
-                        />
-                        <Path
-                          d="M3.07787 8.55102C2.92715 8.1068 2.83992 7.6308 2.83992 7.13899C2.83992 6.64713 2.92715 6.17119 3.06994 5.72696L3.06595 5.63235L0.834531 3.89941L0.761523 3.93414C0.277648 4.90195 0 5.98875 0 7.13899C0 8.28924 0.277648 9.37598 0.761523 10.3438L3.07787 8.55102Z"
-                          fill="#FBBC05"
-                        />
-                        <Path
-                          d="M7.13965 2.76057C8.48026 2.76057 9.38457 3.33966 9.90022 3.82359L11.9151 1.85626C10.6777 0.706016 9.06727 0 7.13965 0C4.3473 0 1.93575 1.6024 0.761719 3.9346L3.07013 5.72742C3.64927 4.00602 5.25167 2.76057 7.13965 2.76057Z"
-                          fill="#EB4335"
-                        />
-                      </G>
-                      <Defs>
-                        <ClipPath id="clip0_684_5624">
-                          <Rect width="14" height="14.3281" fill="white" />
-                        </ClipPath>
-                      </Defs>
-                    </Svg>
-                  </SocialLogin>
-                </SocialLoginContainer>
-              </TouchableWithoutFeedback>
               <ButtonWrapper>
                 <TouchableWithoutFeedback onPress={handleSubmit(onValid)}>
                   <LoginButton>
-                    <ButtonText>Login</ButtonText>
+                    <ButtonText>SIGN IN</ButtonText>
                   </LoginButton>
                 </TouchableWithoutFeedback>
               </ButtonWrapper>
-              <LinkBox>
-                <LinkBoxText>Forgot your password ?</LinkBoxText>
-              </LinkBox>
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  navigation.navigate("SignUp");
-                }}
-              >
-                <SignUp>
-                  <SignUpText>Sign up</SignUpText>
-                </SignUp>
-              </TouchableWithoutFeedback>
+              <LinkWrapper>
+                <LinkBox>
+                  <LinkBoxTextFirst>
+                    Dont{"'"}t have an account ?
+                  </LinkBoxTextFirst>
+                  <TouchableWithoutFeedback
+                    onPress={() => navigation.navigate("SignUp")}
+                  >
+                    <LinkBoxTextSecond>Sign up</LinkBoxTextSecond>
+                  </TouchableWithoutFeedback>
+                </LinkBox>
+                <LinkBox>
+                  <TouchableWithoutFeedback
+                    onPress={() => navigation.navigate("SignUp")}
+                  >
+                    <LinkBoxTextSecond>
+                      Forgot your password ?
+                    </LinkBoxTextSecond>
+                  </TouchableWithoutFeedback>
+                </LinkBox>
+              </LinkWrapper>
             </Form>
           </FormContainer>
         </LoginContainer>

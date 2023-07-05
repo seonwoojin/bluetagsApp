@@ -94,10 +94,7 @@ export default function ProjectCard({ data }: Props) {
   };
 
   const onPress = () => {
-    navigation.navigate("Home", {
-      screen: "ProjectDetail",
-      params: { ...data },
-    });
+    navigation.navigate("ProjectDetail", { ...data });
   };
   return (
     <Shadow

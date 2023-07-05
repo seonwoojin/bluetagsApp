@@ -12,7 +12,7 @@ import { useUser } from "../../libs/context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { HomeStackNavParamList } from "../../navigation/Root";
+import { HomeStackNavParamList, RootNavParamList } from "../../navigation/Root";
 
 const Overlay = styled.View`
   position: absolute;
@@ -97,7 +97,7 @@ interface Props {
 
 export default function Detail({ detail, setDetail }: Props) {
   const { user, setUser, setToken } = useUser();
-  const navigation = useNavigation<NavigationProp<HomeStackNavParamList>>();
+  const navigation = useNavigation<NavigationProp<RootNavParamList>>();
   const X = new Animated.Value(Dimension.width * 0.8);
 
   const opacity = X.interpolate({
@@ -126,7 +126,7 @@ export default function Detail({ detail, setDetail }: Props) {
     moveLeft();
   }, []);
 
-  return (
+  return user ? (
     <>
       <TouchableWithoutFeedback
         onPress={() => {
@@ -237,5 +237,5 @@ export default function Detail({ detail, setDetail }: Props) {
         </TouchableHighlight>
       </AnimatedUserTextDetail>
     </>
-  );
+  ) : null;
 }

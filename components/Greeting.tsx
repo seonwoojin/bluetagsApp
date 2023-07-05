@@ -30,12 +30,13 @@ const IndexWrapper = styled.View`
 const Index = styled.View`
   justify-content: center;
   align-items: flex-end;
+  flex: 1;
 `;
 
 const IndexH1 = styled.Text`
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 22px;
   color: rgba(0, 0, 0, 0.45);
 `;

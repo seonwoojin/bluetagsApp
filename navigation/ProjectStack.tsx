@@ -24,7 +24,6 @@ const ProjectStack = () => {
       }}
     >
       <NativeStack.Screen name="Main" component={ProjectScreeen} />
-      <NativeStack.Screen name="ProjectDetail" component={ProjectDetail} />
     </NativeStack.Navigator>
   );
 };

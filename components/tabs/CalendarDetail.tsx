@@ -12,7 +12,7 @@ import { BluecardWithProject } from "../../libs/schema";
 import { useEffect, useRef, useState } from "react";
 import { Shadow } from "react-native-shadow-2";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { CalendarStackNavParamList } from "../../navigation/Root";
+import { RootNavParamList } from "../../navigation/Root";
 
 const Overlay = styled.View`
   position: absolute;
@@ -260,7 +260,7 @@ export default function CalendarDetail({
   toDos: allTodos,
   todayDate,
 }: Props) {
-  const navigation = useNavigation<NavigationProp<CalendarStackNavParamList>>();
+  const navigation = useNavigation<NavigationProp<RootNavParamList>>();
   const titleRef = useRef() as React.MutableRefObject<View>;
   const timeRef = useRef() as React.MutableRefObject<View>;
   const [verticalHeight, setVerticalHeight] = useState(0);

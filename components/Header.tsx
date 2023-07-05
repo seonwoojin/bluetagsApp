@@ -12,6 +12,7 @@ import onNext from "../libs/nextRef";
 import { useQuery } from "react-query";
 import { Notification } from "../libs/schema";
 import { notifications } from "../libs/api";
+import Constants from "expo-constants";
 
 const Wrapper = styled.View`
   position: relative;
@@ -19,6 +20,7 @@ const Wrapper = styled.View`
   justify-content: space-between;
   align-items: center;
   height: 50px;
+  margin-top: ${Constants.statusBarHeight}px;
   padding-left: 5%;
   padding-right: 5%;
   background-color: white;
@@ -47,9 +49,10 @@ const SearchForm = styled.View`
   align-items: center;
   width: ${Dimension.width * 0.9 - 150}px;
   height: 40px;
-  border-radius: 4px;
-  border: 2px solid #2e57ff;
-  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0 10px;
+  border-radius: 15px;
+  border: 0.5px solid #e2e8f0;
+  background: #ffffff;
   position: relative;
 `;
 
@@ -57,9 +60,8 @@ const SearchInput = styled.TextInput`
   width: 100%;
   height: 100%;
   margin-right: 20px;
-  padding: 0 10px;
   font-size: 12px;
-  color: #2e57ff;
+  color: #212434;
   font-weight: 700;
 `;
 
@@ -67,9 +69,7 @@ interface Props {
   navigation:
     | BottomTabNavigationProp<ParamListBase>
     | NativeStackNavigationProp<ParamListBase>;
-  detail: boolean;
   setDetail: React.Dispatch<React.SetStateAction<boolean>>;
-  notice: boolean;
   setNotice: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -79,13 +79,7 @@ interface Response {
   };
 }
 
-const Header = ({
-  navigation,
-  detail,
-  setDetail,
-  notice,
-  setNotice,
-}: Props) => {
+const Header = ({ navigation, setDetail, setNotice }: Props) => {
   const { user } = useUser();
   const { data, isLoading, refetch } = useQuery<Response>(
     ["notifications", "notices"],
@@ -144,6 +138,7 @@ const Header = ({
             }}
             value={query}
             placeholder="Search..."
+            placeholderTextColor={"rgba(0, 0, 0, 0.4)"}
           />
         </SearchForm>
       </View>
@@ -181,8 +176,8 @@ const Header = ({
             <User>
               <TouchableWithoutFeedback
                 onPress={() => {
-                  setNotice((prev) => !prev);
-                  setDetail(false);
+                  setNotice!((prev) => !prev);
+                  setDetail!(false);
                 }}
               >
                 <Svg
@@ -219,8 +214,8 @@ const Header = ({
             <User>
               <TouchableWithoutFeedback
                 onPress={() => {
-                  setDetail((prev) => !prev);
-                  setNotice(false);
+                  setDetail!((prev) => !prev);
+                  setNotice!(false);
                 }}
               >
                 <Svg width="22" height="22" viewBox="0 0 22 22" fill="none">

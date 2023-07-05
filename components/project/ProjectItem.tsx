@@ -1,17 +1,12 @@
 import { Path, Svg } from "react-native-svg";
 import styled from "styled-components/native";
 import { Project, User } from "../../libs/schema";
-import {
-  CompositeNavigationProp,
-  useNavigation,
-} from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { TouchableWithoutFeedback } from "react-native";
 import subscribeProject from "../../libs/subscribeProject";
 import useMutation from "../../libs/useMutation";
-import { RootNavParamList, TabNavParamList } from "../../navigation/Root";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootNavParamList } from "../../navigation/Root";
 import Dimension from "../../libs/useDimension";
 
 const ProjectContainer = styled.View`
@@ -106,11 +101,6 @@ interface Props {
   index?: number;
 }
 
-type NavigationProps = CompositeNavigationProp<
-  BottomTabNavigationProp<TabNavParamList, "Project">,
-  NativeStackNavigationProp<RootNavParamList>
->;
-
 export default function ProjectItem({
   project,
   user,
@@ -118,7 +108,7 @@ export default function ProjectItem({
   head,
   index,
 }: Props) {
-  const navigation = useNavigation<NavigationProps>();
+  const navigation = useNavigation<NavigationProp<RootNavParamList>>();
   const [subscribe, setSubscribe] = useState<string[]>(
     user ? user.subscribe : []
   );
@@ -147,10 +137,7 @@ export default function ProjectItem({
   ) : (
     <TouchableWithoutFeedback
       onPress={() => {
-        navigation.navigate("Project", {
-          screen: "ProjectDetail",
-          params: { ...project! },
-        });
+        navigation.navigate("ProjectDetail", { ...project! });
       }}
     >
       <ProjectContainer>

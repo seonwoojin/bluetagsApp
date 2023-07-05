@@ -1,15 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import {
-  HomeStackNavParamList,
-  RootNavParamList,
-  TabNavParamList,
-} from "../../navigation/Root";
+import { RootNavParamList } from "../../navigation/Root";
 import styled from "styled-components/native";
-import Banner from "../../components/Banner";
 import Dimension from "../../libs/useDimension";
 import {
   RefreshControl,
-  TextInput,
+  ScrollView,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -21,20 +16,12 @@ import {
   bluecardDetail,
   homeBluecards,
 } from "../../libs/api";
-import {
-  BluecardWithProject,
-  Comment,
-  CommentWithUser,
-} from "../../libs/schema";
-import { useEffect, useState } from "react";
+import { BluecardWithProject, CommentWithUser } from "../../libs/schema";
+import { useEffect, useRef, useState } from "react";
 import { useUser } from "../../libs/context";
 import calendarAdd from "../../libs/calendarAdd";
 import useMutation from "../../libs/useMutation";
-import { CompositeScreenProps, useFocusEffect } from "@react-navigation/native";
-import {
-  BottomTabBarProps,
-  BottomTabScreenProps,
-} from "@react-navigation/bottom-tabs";
+import { useFocusEffect } from "@react-navigation/native";
 import Spinner from "../../components/Spinner";
 import axios from "axios";
 import CommentUser from "../../components/bluecard/CommentUser";
@@ -428,15 +415,16 @@ interface ResponseComment {
   };
 }
 
-type BluecardDetailScreenProps = CompositeScreenProps<
-  BottomTabScreenProps<HomeStackNavParamList, "BluecardDetail">,
-  NativeStackScreenProps<RootNavParamList>
+type BluecardDetailScreenProps = NativeStackScreenProps<
+  RootNavParamList,
+  "BluecardDetail"
 >;
 
 const BluecardDetail = ({
   route: { params },
   navigation,
 }: BluecardDetailScreenProps) => {
+  const scrollRef = useRef<ScrollView | null>(null);
   const { user, setUser } = useUser();
   const {
     data: bluecards,
@@ -508,6 +496,13 @@ const BluecardDetail = ({
   });
 
   useEffect(() => {
+    if (params.data) {
+      setBluecard(params.data);
+      scrollRef.current?.scrollTo({ y: 0 });
+    }
+  }, [params]);
+
+  useEffect(() => {
     if (params.bluecardId && data) {
       setBluecard(data.data.bluecard);
     } else if (params.data) {
@@ -526,6 +521,7 @@ const BluecardDetail = ({
 
   return !loading ? (
     <Container
+      ref={scrollRef}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -688,7 +684,7 @@ const BluecardDetail = ({
                 onPress={() => {
                   if (!user) {
                     navigation.navigate("SignIn");
-                  } else {
+                  } else if (bluecard.deadLineStart || bluecard.deadLineEnd) {
                     calendarAdd({
                       bluecardId: bluecard!.id,
                       mutation,

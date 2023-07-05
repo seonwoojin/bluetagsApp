@@ -40,8 +40,20 @@ export const userInfo = (userId: string, lastId: string) =>
     `/api/bluecards?user=${userId}&read=true&previous=${lastId}`
   );
 
+export const userBluecards = (userId: string) =>
+  axiosInstance.get(`/api/users/bluecards?userId=${userId}`);
+
+export const userUpcoming = (userId: string) =>
+  axiosInstance.get(`/api/bluecards/upcoming/${userId}`);
+
+export const userComments = (userId: string) =>
+  axiosInstance.get(`/api/comments/${userId}`);
+
 export const searchProjects = (query: string) =>
   axiosInstance.get(`/api/search/projects?q=${query}`);
+
+export const searchInfo = (query: string) =>
+  axiosInstance.get(`/api/search/info?q=${query}`);
 
 export const searchBluecards = (query: string, lastID: string) =>
   axiosInstance.get(`/api/search/bluecards?q=${query}&previous=${lastID}`);
@@ -58,3 +70,12 @@ export const greeting = () => axiosInstance.get("/api/info/bluecard");
 
 export const upcomingBluecards = () =>
   axiosInstance.get("/api/bluecards/upcoming");
+
+export const allUserHistory = (userId: string, lastId: string) =>
+  axiosInstance.get(`/api/users/history?userId=${userId}&previous=${lastId}`);
+
+export const allUserSaved = (userId: string, lastId: string) =>
+  axiosInstance.get(`/api/users/saved?userId=${userId}&previous=${lastId}`);
+
+export const allUserComment = (userId: string, lastId: string) =>
+  axiosInstance.get(`/api/users/comment?userId=${userId}&previous=${lastId}`);

@@ -97,7 +97,7 @@ export default function App() {
     async function prepare() {
       try {
         await getToken();
-        await new Promise((resolve: any) => setTimeout(resolve, 2000));
+        await new Promise((resolve: any) => setTimeout(resolve, 10000));
       } catch (e) {
         console.warn(e);
       } finally {

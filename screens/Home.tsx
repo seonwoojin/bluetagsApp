@@ -4,32 +4,20 @@ import { allProjects, homeBluecards, homeInfo } from "../libs/api";
 import { BluecardWithProject, Project } from "../libs/schema";
 import BluecardSlider from "../components/slider/BluecardSlider";
 import { useEffect, useMemo, useState } from "react";
-import ProjectCardSlider from "../components/slider/ProjectCardSlider";
-import { useUser } from "../libs/context";
 import {
   FlatList,
   RefreshControl,
-  ScrollView,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import {
-  HomeStackNavParamList,
-  TabNavParamList,
-  WatchListStackNavParamList,
-} from "../navigation/Root";
-import {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from "@react-navigation/native-stack";
+import { HomeStackNavParamList, TabNavParamList } from "../navigation/Root";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Spinner from "../components/Spinner";
 import IndexInfo from "../components/home/IndexInfo";
-import {
-  BottomTabNavigationProp,
-  BottomTabScreenProps,
-} from "@react-navigation/bottom-tabs";
 import ProjectCard from "../components/project/ProjectCard";
 import MostReadNews from "../components/MostReadNews";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 
 const Wrapper = styled.ScrollView``;
 
@@ -140,9 +128,12 @@ interface ProjectsResponse {
   };
 }
 
-const Home: React.FC<BottomTabScreenProps<TabNavParamList, "Home">> = ({
-  navigation,
-}) => {
+type HomeScreenProps = CompositeScreenProps<
+  NativeStackScreenProps<HomeStackNavParamList, "Main">,
+  BottomTabScreenProps<TabNavParamList, "Home">
+>;
+
+const Home: React.FC<HomeScreenProps> = ({ navigation }) => {
   const queryClient = useQueryClient();
   const { data, isLoading, error } = useQuery<Response>(
     ["homequery", "home"],

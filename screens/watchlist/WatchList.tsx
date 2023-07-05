@@ -16,7 +16,10 @@ import styled from "styled-components/native";
 import React, { useEffect, useRef, useState } from "react";
 import Banner from "../../components/Banner";
 import BlueCardMedium from "../../components/bluecard/BlueCardMedium";
-import { WatchListStackNavParamList } from "../../navigation/Root";
+import {
+  TabNavParamList,
+  WatchListStackNavParamList,
+} from "../../navigation/Root";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Spinner from "../../components/Spinner";
 import { useUser } from "../../libs/context";
@@ -26,6 +29,8 @@ import { Path, Svg } from "react-native-svg";
 import axios from "axios";
 import Bluecard from "../../components/bluecard/Bluecard";
 import { Shadow } from "react-native-shadow-2";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 
 const FlatlistContainer = styled.View`
   position: relative;
@@ -161,9 +166,12 @@ interface ProjectDataResponse {
   };
 }
 
-const WatchList: React.FC<
-  NativeStackScreenProps<WatchListStackNavParamList, "Main">
-> = ({ navigation }) => {
+type WatchListScreenProps = CompositeScreenProps<
+  NativeStackScreenProps<WatchListStackNavParamList, "Main">,
+  BottomTabScreenProps<TabNavParamList, "WatchList">
+>;
+
+const WatchList: React.FC<WatchListScreenProps> = ({ navigation }) => {
   const { user } = useUser();
   const { data: projectData, isLoading: projectLoading } =
     useQuery<ProjectsResponse>(["watchlist", "projects"], allProjects);
@@ -483,15 +491,7 @@ const WatchList: React.FC<
         data={datas}
         renderItem={({ item }) => (
           <BluecardContainer>
-            <Bluecard
-              fn={() => {
-                navigation.navigate("BluecardDetail", { data: { ...item } });
-              }}
-              projectFn={() => {
-                navigation.navigate("ProjectDetail", { ...item.project });
-              }}
-              data={item}
-            />
+            <Bluecard data={item} />
           </BluecardContainer>
         )}
         ItemSeparatorComponent={HSeparator}

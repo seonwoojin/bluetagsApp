@@ -147,11 +147,9 @@ const PostContextText = styled.Text`
 
 interface Props {
   data: BluecardWithProject;
-  fn: () => void;
-  projectFn: () => void;
 }
 
-const BlueCardMedium = ({ data, fn, projectFn }: Props) => {
+const BlueCardMedium = ({ data }: Props) => {
   const { user, setUser } = useUser();
   const [save] = useMutation(
     `https://www.bluetags.app/api/bluecards/user-save`
@@ -222,7 +220,11 @@ const BlueCardMedium = ({ data, fn, projectFn }: Props) => {
       offset={[0, 3]}
       style={{ borderRadius: 15 }}
     >
-      <TouchableWithoutFeedback onPress={fn}>
+      <TouchableWithoutFeedback
+        onPress={() =>
+          navigation.navigate("BluecardDetail", { data: { ...data } })
+        }
+      >
         <BlueCardContainer>
           <BlueCardBackGround>
             <BlueCardBackGroundImage
@@ -234,7 +236,11 @@ const BlueCardMedium = ({ data, fn, projectFn }: Props) => {
               }}
             />
             <InfoWrapper>
-              <TouchableWithoutFeedback onPress={projectFn}>
+              <TouchableWithoutFeedback
+                onPress={() =>
+                  navigation.navigate("ProjectDetail", { ...data.project })
+                }
+              >
                 <ProjectLogo>
                   <ProjectLogoImage source={{ uri: data.project.logoImage }} />
                 </ProjectLogo>
