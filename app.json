@@ -2,8 +2,17 @@
   "expo": {
     "name": "bluetagsApp",
     "slug": "bluetagsApp",
+    "scheme": "myapp",
     "version": "1.0.0",
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": ["**/*"],
+    "extra": {
+      "eas": {
+        "projectId": "f188c4ff-f40f-49f1-b537-0dcb40ca1844"
+      }
+    },
+    "android": {
+      "package": "com.bluetags"
+    }
   },
   "name": "bluetagsApp"
 }

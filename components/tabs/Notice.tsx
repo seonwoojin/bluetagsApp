@@ -3,6 +3,7 @@ import Dimension from "../../libs/useDimension";
 import Constants from "expo-constants";
 import {
   Animated,
+  BackHandler,
   Easing,
   FlatList,
   TouchableHighlight,
@@ -239,6 +240,20 @@ export default function Notice({ notice, setNotice }: Props) {
     await refetch();
     setRefreshing(false);
   };
+
+  const handleBackPress = () => {
+    moveRight();
+    setTimeout(() => setNotice((prev) => !prev), 300);
+
+    return true;
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+  }, []);
 
   useEffect(() => {
     if (data && data.data.notifications.length > 0) {

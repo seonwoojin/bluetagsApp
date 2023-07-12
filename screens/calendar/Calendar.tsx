@@ -542,7 +542,10 @@ function getRemainWeeks(date: Date, calendarDatas: BluecardWithProject[]) {
         }
         if (count > 3) {
           for (let w = 3; w < array[t][i].content.length; w++) {
-            if (!array[t][i].content[w].includes("possible")) {
+            if (
+              array[t][i].content[w] &&
+              !array[t][i].content[w].includes("possible")
+            ) {
               array[t][i].lastTiles.push(array[t][i].content[w]);
             }
           }
@@ -690,8 +693,18 @@ const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
   }, [date.getFullYear(), yearArray]);
 
   useEffect(() => {
-    setToDos(calendarDatas);
-  }, [calendarDatas]);
+    const data =
+      filter === ""
+        ? calendarDatas
+        : calendarDatas.filter((bluecard) =>
+            bluecard.bluetags.includes(filter)
+          );
+    setToDos(
+      !change && user
+        ? data.filter((data) => user.calendar.includes(data.id))
+        : data
+    );
+  }, [calendarDatas, change, user, filter]);
 
   useEffect(() => {
     setEvent(0);
@@ -825,7 +838,7 @@ const Calendar = ({ setCalendarDetail, setToDos, setTodayDate }: Props) => {
 
   const loading = isLoading || weeks.length === 0;
 
-  return isLoading ? (
+  return loading ? (
     <Spinner />
   ) : (
     <FlatlistContainer>

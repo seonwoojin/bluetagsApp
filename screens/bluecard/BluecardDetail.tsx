@@ -3,6 +3,7 @@ import { RootNavParamList } from "../../navigation/Root";
 import styled from "styled-components/native";
 import Dimension from "../../libs/useDimension";
 import {
+  Image,
   RefreshControl,
   ScrollView,
   TouchableWithoutFeedback,
@@ -27,6 +28,7 @@ import axios from "axios";
 import CommentUser from "../../components/bluecard/CommentUser";
 import MostReadNews from "../../components/MostReadNews";
 import BluecardSlider from "../../components/slider/BluecardSlider";
+import RenderHTML from "react-native-render-html";
 
 const Container = styled.ScrollView`
   width: 100%;
@@ -54,13 +56,12 @@ const BluecardWrapper = styled.View`
   background: #ffffff;
 `;
 
-const BlueCardBackGround = styled.View`
+const BlueCardBackGround = styled.View<{ height: number }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  min-height: 150px;
-  height: auto;
+  width: ${Dimension.width - 60}px;
+  height: ${(props) => props.height}px;
   border-radius: 10px;
   overflow: hidden;
 `;
@@ -449,6 +450,7 @@ const BluecardDetail = ({
   const [commentEdit, setCommentEdit] = useState("");
   const [commentText, setCommentText] = useState("");
   const [commentEditText, setCommentEditText] = useState("");
+  const [imageHeight, setImageHeight] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
   const {
@@ -483,6 +485,24 @@ const BluecardDetail = ({
       .catch((error) => {});
   };
 
+  useEffect(() => {
+    if (user && bluecard) {
+      if (!user.readBlueCard.includes(bluecard.id)) {
+        axios
+          .post("https://www.bluetags.app/api/bluecards/user-read", {
+            id: user.id,
+            bluecardId: bluecard.id,
+          })
+          .then(() => {
+            setUser({
+              ...user,
+              readBlueCard: [...user.readBlueCard, bluecard.id],
+            });
+          });
+      }
+    }
+  }, [user, bluecard]);
+
   useFocusEffect(() => {
     if (user) {
       if (params.bluecardId) {
@@ -494,6 +514,15 @@ const BluecardDetail = ({
       }
     }
   });
+
+  useEffect(() => {
+    if (bluecard && bluecard.thumbnail !== "") {
+      Image.getSize(bluecard.thumbnail, (width, height) => {
+        const imageHeight = (height / width) * (Dimension.width - 60);
+        setImageHeight(imageHeight);
+      });
+    }
+  }, [bluecard]);
 
   useEffect(() => {
     if (params.data) {
@@ -614,18 +643,18 @@ const BluecardDetail = ({
                     </Svg>
                   )}
                 </BlueCardProject>
-                {bluecard.thumbnail !== "" ? (
-                  <BlueCardBackGround>
+                {bluecard.thumbnail !== "" && imageHeight > 0 ? (
+                  <BlueCardBackGround height={imageHeight}>
                     <BlueCardBackGroundImage
                       source={{ uri: bluecard.thumbnail }}
                     />
                   </BlueCardBackGround>
                 ) : null}
-                <BlueCardDescription>
-                  <BlueCardDescriptionText>
-                    {bluecard.description}
-                  </BlueCardDescriptionText>
-                </BlueCardDescription>
+                <RenderHTML
+                  contentWidth={Dimension.width}
+                  source={{ html: bluecard.description }}
+                />
+
                 {/* <BlueCardTagWrapper>
               <Optionwrapper>
                 <KakaoShare

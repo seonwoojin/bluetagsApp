@@ -49,7 +49,7 @@ const UserProfilePrev = styled.View`
   min-width: 100px;
   height: 100px;
   margin-right: 50px;
-  border-radius: 50%;
+  border-radius: 50px;
   background: #dddddd;
 `;
 
@@ -342,19 +342,19 @@ const UserDetail = ({ navigation }: UserDetailScreenProps) => {
           <BluecardSlider data={data.data.saved.slice(0, 3)} />
         </BluecardWrapper>
       ) : null}
-      <BluecardWrapper style={{ marginBottom: 30 }}>
-        <BluecardWrapperTitle>
-          <BluecardWrapperTitleText>Comments</BluecardWrapperTitleText>
-          <TouchableWithoutFeedback
-            onPress={() => navigation.navigate("UserComment")}
-          >
-            <SubSelect>
-              <SubSelectText>VIEW ALL</SubSelectText>
-            </SubSelect>
-          </TouchableWithoutFeedback>
-        </BluecardWrapperTitle>
-        <CommentWrapper>
-          {comments?.data.comments.slice(0, 3).map((comment, index) => (
+      {comments?.data.comments.slice(0, 3).map((comment, index) => (
+        <BluecardWrapper style={{ marginBottom: 30 }}>
+          <BluecardWrapperTitle>
+            <BluecardWrapperTitleText>Comments</BluecardWrapperTitleText>
+            <TouchableWithoutFeedback
+              onPress={() => navigation.navigate("UserComment")}
+            >
+              <SubSelect>
+                <SubSelectText>VIEW ALL</SubSelectText>
+              </SubSelect>
+            </TouchableWithoutFeedback>
+          </BluecardWrapperTitle>
+          <CommentWrapper>
             <CommentUser
               key={index}
               touch={() =>
@@ -364,9 +364,9 @@ const UserDetail = ({ navigation }: UserDetailScreenProps) => {
               }
               comment={comment}
             />
-          ))}
-        </CommentWrapper>
-      </BluecardWrapper>
+          </CommentWrapper>
+        </BluecardWrapper>
+      ))}
     </Container>
   );
 };

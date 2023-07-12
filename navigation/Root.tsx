@@ -89,6 +89,7 @@ const Root = () => {
               navigation={navigation}
             />
           ),
+          animation: "fade",
         }}
       >
         <Nav.Screen name="Tabs">

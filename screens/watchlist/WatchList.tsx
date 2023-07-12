@@ -346,7 +346,7 @@ const WatchList: React.FC<WatchListScreenProps> = ({ navigation }) => {
     outputRange: ["#1c1b1b", "#ffffff"],
   });
 
-  return datas && datas.length > 0 ? (
+  return datas ? (
     <FlatlistContainer>
       <SelectWrapper>
         {user ? (

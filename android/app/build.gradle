@@ -113,13 +113,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.bluetagsapp"
+    namespace 'com.bluetags'
     defaultConfig {
-        applicationId "com.bluetagsapp"
+        applicationId 'com.bluetags'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.0.4"
     }
 
     splits {

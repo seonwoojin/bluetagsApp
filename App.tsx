@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as SplashScreen from "expo-splash-screen";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -15,7 +14,7 @@ import ToastSuccess from "./components/ToastSuccess";
 import axios from "axios";
 import useInterval from "./libs/useInterval";
 
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
@@ -97,37 +96,38 @@ export default function App() {
     async function prepare() {
       try {
         await getToken();
-        await new Promise((resolve: any) => setTimeout(resolve, 10000));
+        // await new Promise((resolve: any) => setTimeout(resolve, 10000));
       } catch (e) {
         console.warn(e);
       } finally {
-        setAppIsReady(true);
+        // setAppIsReady(true);
       }
     }
 
     prepare();
   }, []);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) {
-      // This tells the splash screen to hide immediately! If we call this after
-      // `setAppIsReady`, then we may see a blank screen while the app is
-      // loading its initial state and rendering its first pixels. So instead,
-      // we hide the splash screen once we know the root view has already
-      // performed layout.
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
+  // const onLayoutRootView = useCallback(async () => {
+  //   if (appIsReady) {
+  //     // This tells the splash screen to hide immediately! If we call this after
+  //     // `setAppIsReady`, then we may see a blank screen while the app is
+  //     // loading its initial state and rendering its first pixels. So instead,
+  //     // we hide the splash screen once we know the root view has already
+  //     // performed layout.
+  //     await SplashScreen.hideAsync();
+  //   }
+  // }, [appIsReady]);
 
-  if (!appIsReady) {
-    return null;
-  }
+  // if (!appIsReady) {
+  //   return null;
+  // }
 
   return (
     <UserContext.Provider value={{ user, setUser, setToken }}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-          <NavigationContainer onReady={onLayoutRootView}>
+          {/* <NavigationContainer onReady={onLayoutRootView}> */}
+          <NavigationContainer>
             <StatusBar backgroundColor="white" />
             <Root />
             <Toast config={toastConfig} />

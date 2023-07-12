@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">bluetagsApp</string>
+  <string name="app_name">Bluetags</string>
+  <string name="server_client_id">136242208106-e9ehel26sdfju838vaueqjbad0qt3g0o.apps.googleusercontent.com</string>
 </resources>

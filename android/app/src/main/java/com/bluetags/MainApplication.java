@@ -1,4 +1,4 @@
-package com.bluetagsapp;
+package com.bluetags;
 
 import android.app.Application;
 import android.content.res.Configuration;

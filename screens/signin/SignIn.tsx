@@ -259,7 +259,7 @@ const SignIn = ({ navigation }: SignInScreenProps) => {
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
       "136242208106-3nsqr0dhco6uu97chrr4d96ebnb8gb39.apps.googleusercontent.com",
-    expoClientId:
+    clientId:
       "136242208106-khf9h80bovft9njgurt3p8l2v7js6ive.apps.googleusercontent.com",
   });
   const [login, { loading, data, error, status }] = useMutation<LoginResponse>(
