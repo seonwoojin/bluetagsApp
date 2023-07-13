@@ -1,4 +1,4 @@
-package com.bluetags;
+package com.blueroom.bluetags;
 
 import android.os.Build;
 import android.os.Bundle;

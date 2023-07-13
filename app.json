@@ -11,7 +11,7 @@
       }
     },
     "android": {
-      "package": "com.bluetags"
+      "package": "com.blueroom.bluetags"
     }
   },
   "name": "bluetagsApp"
